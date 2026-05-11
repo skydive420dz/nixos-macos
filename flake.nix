@@ -54,7 +54,7 @@
                 home.username = "skydive420dz";
                 home.homeDirectory = "/Users/skydive420dz";
                 home.stateVersion = "25.11";
-                home.packages = [pkgs.ripgrep pkgs.fd pkgs.curl pkgs.less];
+                home.packages = [pkgs.yazi pkgs.kitty-themes pkgs.ripgrep pkgs.fd pkgs.curl pkgs.less];
                 home.sessionVariables = {
                   PAGER = "less";
                   CLICOLOR = "1";
@@ -71,15 +71,34 @@
                 programs.zsh.syntaxHighlighting.enable = true;
                 programs.zsh.shellAliases = {
                   ls = "ls -G -F";
+                  vim = "nvim";
+                  nrs = "sudo darwin-rebuild switch --flake ~/nixos-macos";
+                  nuf = "sudo nix flake update --flake ~/nixos-macos";
                 };
                 programs.starship.enable = true;
                 programs.starship.enableZshIntegration = true;
                 programs.kitty = {
                   enable = true;
                   settings = {
-                    font_family = "MesloLGS Nerd Font Mono";
-                    font_size = 16;
+                    background_opacity = "0.90";
+                    scrollback_lines = 10000;
+                    enable_audio_bell = "no";
+                    tab_bar_style = "powerline";
+                    tab_powerline_style = "round";
+                    cursor_trail = 10;
+                    repaint_delay = 10;
+                    hide_window_decorations = "yes";
+                    shell_integration = "enabled";
+                    allow_remote_control = "yes";
+                    window_padding_width = 10;
                   };
+
+                  font = {
+                    name = "MesloLGS Nerd Font Mono";
+                    size = 16;
+                  };
+
+                  themeFile = "Catppuccin-Mocha";
                 };
               })
             ];
