@@ -224,7 +224,14 @@ in
         };
 
         binds = {
-          whichKey.enable = true;
+          whichKey = {
+            enable = true;
+            setupOpts = {
+              preset = "helix";
+              notify = false;
+              delay = 500;
+            };
+          };
           cheatsheet.enable = true;
         };
 

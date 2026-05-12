@@ -8,8 +8,8 @@
     shellAliases = {
       ls = "ls -G -F";
       vim = "nvim";
-      nrs = "sudo darwin-rebuild switch --flake ~/nixos-macos";
-      nuf = "sudo nix flake update --flake ~/nixos-macos";
+      nrs = "sudo darwin-rebuild switch --flake ~/Projects/nixos-macos";
+      nuf = "sudo nix flake update --flake ~/Projects/nixos-macos";
     };
   };
 }
