@@ -6,3 +6,5 @@ result-*
 *.swp
 *.swo
 *~
+
+*.log

@@ -3,23 +3,27 @@
   pkgs,
   lib,
   ...
-}: let
-  qmlImportPaths =
-    [
-      "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      "${pkgs.quickshell}/lib/qt-6/qml"
-    ];
+}:
+let
+  inherit (lib.generators) mkLuaInline;
+
+  qmlImportPaths = [
+    "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
+  ]
+  ++ lib.optionals pkgs.stdenv.isLinux [
+    "${pkgs.quickshell}/lib/qt-6/qml"
+  ];
   qmlImportArgs = lib.concatMapStringsSep " " (path: "-I ${path}") qmlImportPaths;
-in {
+in
+{
   programs.nvf = {
     enable = true;
     settings = {
       vim = {
-        startPlugins = ["chatgpt-nvim"];
+        startPlugins = [ ];
 
-        extraPackages = with pkgs;
+        extraPackages =
+          with pkgs;
           [
             tree-sitter # Satisfies tree-sitter-cli requirement
             gcc
@@ -49,7 +53,10 @@ in {
 
         spellcheck = {
           enable = true;
-          languages = ["en"];
+          languages = [
+            "en"
+            "en_us"
+          ];
         };
 
         lsp = {
@@ -96,11 +103,11 @@ in {
             enable = true;
             format = {
               enable = true;
-              type = ["nixfmt"];
+              type = [ "nixfmt" ];
             };
             lsp = {
               enable = true;
-              servers = ["nixd"];
+              servers = [ "nixd" ];
             };
             treesitter = {
               enable = true;
@@ -110,11 +117,11 @@ in {
             enable = true;
             format = {
               enable = true;
-              type = ["taplo"];
+              type = [ "taplo" ];
             };
             lsp = {
               enable = true;
-              servers = ["taplo"];
+              servers = [ "taplo" ];
             };
             treesitter = {
               enable = true;
@@ -128,18 +135,18 @@ in {
             enable = true;
             format = {
               enable = true;
-              type = ["shfmt"];
+              type = [ "shfmt" ];
             };
             lsp = {
               enable = true;
-              servers = ["bash-language-server"];
+              servers = [ "bash-language-server" ];
             };
           };
           json = {
             enable = true;
             lsp = {
               enable = true;
-              servers = ["vscode-json-language-server"];
+              servers = [ "vscode-json-language-server" ];
             };
             treesitter = {
               enable = true;
@@ -150,11 +157,11 @@ in {
             enable = true;
             format = {
               enable = true;
-              type = ["prettier"];
+              type = [ "prettier" ];
             };
             lsp = {
               enable = true;
-              servers = ["vscode-css-language-server"];
+              servers = [ "vscode-css-language-server" ];
             };
             treesitter = {
               enable = true;
@@ -164,11 +171,11 @@ in {
             enable = true;
             format = {
               enable = true;
-              type = ["qmlformat"];
+              type = [ "qmlformat" ];
             };
             lsp = {
               enable = true;
-              servers = ["qmlls"];
+              servers = [ "qmlls" ];
             };
             treesitter = {
               enable = true;
@@ -186,11 +193,24 @@ in {
           fidget-nvim.enable = true;
           highlight-undo.enable = true;
           blink-indent.enable = true;
-          indent-blankline.enable = true;
+          indent-blankline.enable = false;
         };
+        mini.icons.enable = true;
 
         statusline.lualine.enable = true;
-        autocomplete.blink-cmp.enable = true;
+        autocomplete.blink-cmp = {
+          enable = true;
+          setupOpts.keymap = {
+            "<Up>" = [
+              "select_prev"
+              "fallback"
+            ];
+            "<Down>" = [
+              "select_next"
+              "fallback"
+            ];
+          };
+        };
         snippets.luasnip.enable = true;
         filetree.neo-tree.enable = true;
         tabline.nvimBufferline.enable = true;
@@ -275,18 +295,84 @@ in {
         };
         dashboard = {
           dashboard-nvim.enable = false;
-          alpha.enable = true;
+          alpha = {
+            enable = true;
+            theme = null;
+            layout = [
+              {
+                type = "padding";
+                val = 2;
+              }
+              {
+                type = "text";
+                val = [
+                  "                                                        "
+                  "             ████  ████                            "
+                  "             █████ █████                           "
+                  "              ██████████                          "
+                  "      ███████████████████                         "
+                  "     █████████████████████                        "
+                  "    ██████████████████████                       "
+                  "   ████████████████████████                      "
+                  "  ██████████████████████████                     "
+                  "  ██████████████████████████                     "
+                  "   ███████████████████████                       "
+                  "    █████████████████████                        "
+                  "        ███████████████                          "
+                  "          ████████████                              "
+                  "                                                        "
+                  "             N E O V I M   /   skydive420dz            "
+                  "                                                        "
+                ];
+                opts = {
+                  position = "center";
+                  hl = "Type";
+                };
+              }
+              {
+                type = "padding";
+                val = 1;
+              }
+              {
+                type = "group";
+                val = mkLuaInline ''
+                  (function()
+                    local dashboard = require("alpha.themes.dashboard")
+                    return {
+                      dashboard.button("f", "  Find file", "<cmd>Telescope find_files<cr>"),
+                      dashboard.button("g", "󰱼  Live grep", "<cmd>Telescope live_grep<cr>"),
+                      dashboard.button("r", "  Recent files", "<cmd>Telescope oldfiles<cr>"),
+                      dashboard.button("s", "󰆓  Load session", "<cmd>SessionManager load_session<cr>"),
+                      dashboard.button("q", "  Quit", "<cmd>qa<cr>"),
+                    }
+                  end)()
+                '';
+                opts = {
+                  spacing = 1;
+                };
+              }
+            ];
+          };
         };
 
-        session.nvim-session-manager.enable = false;
+        session.nvim-session-manager = {
+          enable = true;
+          setupOpts.autoload_mode = "Disabled";
+          mappings = {
+            saveCurrentSession = "<leader>Ss";
+            loadSession = "<leader>Sl";
+            loadLastSession = "<leader>Sr";
+            deleteSession = "<leader>Sd";
+          };
+        };
         gestures.gesture-nvim.enable = false;
         comments.comment-nvim.enable = true;
         presence.neocord.enable = false;
 
         assistant = {
-          chatgpt.enable = true;
+          chatgpt.enable = false;
           copilot.enable = false;
-          codecompanion-nvim.enable = true;
+          codecompanion-nvim.enable = false;
           avante-nvim.enable = false;
         };
 
@@ -300,30 +386,53 @@ in {
           -- Clipboard fix
           vim.opt.clipboard = 'unnamedplus'
 
+          -- Spelling
+          vim.opt.spell = true
+          vim.opt.spelllang = { "en_us" }
+          vim.keymap.set("n", "]s", "]s", { desc = "Next spelling error" })
+          vim.keymap.set("n", "[s", "[s", { desc = "Previous spelling error" })
+          vim.keymap.set("n", "<leader>zg", "zg", { desc = "Add word to dictionary" })
+          vim.keymap.set("n", "<leader>zw", "zw", { desc = "Mark word wrong" })
+          vim.keymap.set("n", "<leader>z=", "z=", { desc = "Spelling suggestions" })
+
+          -- Autosave changed normal file buffers after 3 seconds idle in normal mode
+          vim.opt.updatetime = 3000
+          local autosave_group = vim.api.nvim_create_augroup("NormalModeAutosave", { clear = true })
+          local autosave_pending = false
+
+          local function can_autosave()
+            return vim.bo.modified
+              and vim.bo.modifiable
+              and not vim.bo.readonly
+              and vim.bo.buftype == ""
+              and vim.fn.expand("%") ~= ""
+              and vim.fn.mode() == "n"
+          end
+
+          vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+            group = autosave_group,
+            callback = function()
+              autosave_pending = true
+            end,
+          })
+
+          vim.api.nvim_create_autocmd("CursorHold", {
+            group = autosave_group,
+            callback = function()
+              if autosave_pending and can_autosave() then
+                local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":t")
+                autosave_pending = false
+                vim.cmd("silent! update")
+                vim.notify("Saved " .. filename, vim.log.levels.INFO, { title = "Autosave" })
+              end
+            end,
+          })
+
           -- Navigation Hints Toggle
           vim.keymap.set("n", "<leader>pt", "<cmd>Precognition toggle<cr>", { desc = "Toggle Hints" })
 
           -- Trouble Diagnostics Toggle
           vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics" })
-
-          -- CodeCompanion Setup for DeepSeek
-          require("codecompanion").setup({
-            strategies = {
-              chat = { adapter = "ollama" },
-              inline = { adapter = "ollama" },
-            },
-            adapters = {
-              ollama = function()
-                return require("codecompanion.adapters").extend("ollama", {
-                  schema = {
-                    model = {
-                      default = "deepseek-r1:7b",
-                    },
-                  },
-                })
-              end,
-            },
-          })
 
         '';
 
