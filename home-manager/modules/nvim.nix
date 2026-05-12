@@ -344,11 +344,13 @@ in
                 type = "group";
                 val = mkLuaInline ''
                   (function()
-                    local dashboard = require("alpha.themes.dashboard")
-                    return {
-                      dashboard.button("f", "  Find file", "<cmd>Telescope find_files<cr>"),
-                      dashboard.button("g", "󰱼  Live grep", "<cmd>Telescope live_grep<cr>"),
-                      dashboard.button("r", "  Recent files", "<cmd>Telescope oldfiles<cr>"),
+	                    local dashboard = require("alpha.themes.dashboard")
+	                    return {
+	                      dashboard.button("n", "  New file", "<cmd>ene <bar> startinsert<cr>"),
+	                      dashboard.button("e", "  Explorer", "<cmd>Neotree toggle<cr>"),
+	                      dashboard.button("f", "  Find file", "<cmd>Telescope find_files<cr>"),
+	                      dashboard.button("g", "󰱼  Live grep", "<cmd>Telescope live_grep<cr>"),
+	                      dashboard.button("r", "  Recent files", "<cmd>Telescope oldfiles<cr>"),
                       dashboard.button("s", "󰆓  Load session", "<cmd>SessionManager load_session<cr>"),
                       dashboard.button("q", "  Quit", "<cmd>qa<cr>"),
                     }
