@@ -87,11 +87,13 @@
               home.stateVersion = "25.11";
 
               home.packages = with pkgs; [
+                bitwarden-cli
                 yazi
                 kitty-themes
                 ripgrep
                 fd
                 curl
+                jq
                 less
               ];
 
