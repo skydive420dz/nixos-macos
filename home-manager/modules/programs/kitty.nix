@@ -10,6 +10,9 @@ in
 
     settings = {
       background_opacity = "0.90";
+      remember_window_size = "no";
+      initial_window_width = 9999;
+      initial_window_height = 9999;
       scrollback_lines = 10000;
       enable_audio_bell = "no";
       tab_bar_style = "powerline";
@@ -63,4 +66,8 @@ in
       size = 16;
     };
   };
+
+  xdg.configFile."kitty/macos-launch-services-cmdline".text = ''
+    --start-as=maximized
+  '';
 }

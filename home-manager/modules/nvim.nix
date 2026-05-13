@@ -6,6 +6,8 @@
 }:
 let
   inherit (lib.generators) mkLuaInline;
+  theme = import ../../config/theme/tokens.nix;
+  semantic = theme.semantic;
 
   qmlImportPaths = [
     "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
@@ -341,7 +343,7 @@ in
                 ];
                 opts = {
                   position = "center";
-                  hl = "Type";
+                  hl = "AlphaHeader";
                 };
               }
               {
@@ -394,6 +396,39 @@ in
         };
 
         clipboard.enable = true;
+
+        luaConfigRC.themeTokens = ''
+          local theme_tokens = {
+            name = "${theme.name}",
+            foreground = "${semantic.foreground}",
+            background = "${semantic.background}",
+            surface = "${semantic.surface}",
+            border = "${semantic.border}",
+            border_active = "${semantic.borderActive}",
+            accent = "${semantic.accent}",
+            accent_alt = "${semantic.accentAlt}",
+            muted = "${semantic.muted}",
+            warning = "${semantic.warning}",
+          }
+
+          vim.g.theme_tokens = theme_tokens
+
+          local function apply_theme_token_highlights()
+            vim.api.nvim_set_hl(0, "AlphaHeader", { fg = theme_tokens.accent })
+            vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = theme_tokens.background })
+            vim.api.nvim_set_hl(0, "WhichKeyBorder", { fg = theme_tokens.border_active, bg = theme_tokens.background })
+            vim.api.nvim_set_hl(0, "WhichKey", { fg = theme_tokens.accent })
+            vim.api.nvim_set_hl(0, "WhichKeyGroup", { fg = theme_tokens.accent_alt })
+            vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = theme_tokens.foreground })
+            vim.api.nvim_set_hl(0, "WhichKeySeparator", { fg = theme_tokens.muted })
+          end
+
+          vim.api.nvim_create_autocmd("ColorScheme", {
+            pattern = "*",
+            callback = apply_theme_token_highlights,
+          })
+          apply_theme_token_highlights()
+        '';
 
         luaConfigRC.navigation = ''
           -- Health check path fixes
