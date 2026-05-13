@@ -19,6 +19,7 @@
       jq
       less
       ffmpeg-full
+      vlc-bin
       inkscape
       darktable
       libreoffice-bin
