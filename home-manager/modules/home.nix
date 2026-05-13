@@ -19,6 +19,7 @@
       curl
       jq
       less
+      ffmpeg-full
       inkscape
       darktable
       libreoffice-bin
