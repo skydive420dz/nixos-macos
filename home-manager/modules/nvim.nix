@@ -212,7 +212,15 @@ in
           };
         };
         snippets.luasnip.enable = true;
-        filetree.neo-tree.enable = true;
+        filetree.neo-tree = {
+          enable = true;
+          setupOpts = {
+            enable_git_status = true;
+            enable_refresh_on_write = true;
+            git_status_async = true;
+            filesystem.use_libuv_file_watcher = true;
+          };
+        };
         tabline.nvimBufferline.enable = true;
 
         # Added explicit treesitter block to help NixOS healthcheck
