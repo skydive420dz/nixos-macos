@@ -1,0 +1,20 @@
+
+[[manager.prepend_keymap]]
+on = ["g", "d"]
+run = "cd ~/Downloads"
+desc = "Go to Downloads"
+
+[[manager.prepend_keymap]]
+on = ["!"]
+run = 'shell "$SHELL" --block'
+desc = "Drop to Shell"
+
+[[manager.prepend_keymap]]
+on = ["C"]
+run = "plugin smart-enter"            # Requires the smart-enter plugin
+desc = "Enter directory or open file"
+
+[[manager.prepend_keymap]]
+on = ["c", "a"]
+run = "plugin ouch"
+desc = "Compress with ouch"

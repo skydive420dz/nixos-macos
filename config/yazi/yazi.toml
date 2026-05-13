@@ -1,0 +1,21 @@
+
+[manager]
+ratio = [1, 3, 4]   # Parent, Current, Preview width ratio
+sort_by = "natural"
+show_hidden = true
+show_symlink = true
+
+[preview]
+tab_size = 2
+max_width = 800
+max_height = 1000
+image_delay = 0   # Lower this for snappy GPU terminals like Kitty
+
+[opener]
+edit = [{ run = 'nvim "$@"', block = true, desc = "Open in Neovim" }]
+extract = [{ run = 'ouch d -y "$@"', desc = "Extract here with ouch", for = "unix" }]
+
+[plugin]
+prepend_previewers = [
+  { mime = "application/{*zip,tar,bzip2,7z*,rar,xz,zstd,java-archive}", run = "ouch --show-file-icons" },
+]

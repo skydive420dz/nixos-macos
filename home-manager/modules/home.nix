@@ -12,7 +12,6 @@
 
     packages = with pkgs; [
       bitwarden-cli
-      yazi
       kitty-themes
       ripgrep
       fd

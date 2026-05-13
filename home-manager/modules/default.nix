@@ -11,6 +11,7 @@
     ./programs/kitty.nix
     ./programs/starship.nix
     ./programs/vscode.nix
+    ./programs/yazi.nix
     ./programs/zsh.nix
   ];
 }
