@@ -8,6 +8,7 @@
     ./programs/bat.nix
     ./programs/fzf.nix
     ./programs/git.nix
+    ./programs/karabiner.nix
     ./programs/kitty.nix
     ./programs/starship.nix
     ./programs/vscode.nix
