@@ -19,6 +19,10 @@
       curl
       jq
       less
+      inkscape
+      darktable
+      libreoffice-bin
+      vesktop
     ];
 
     sessionVariables = {

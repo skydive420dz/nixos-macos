@@ -10,6 +10,7 @@
     ./programs/git.nix
     ./programs/kitty.nix
     ./programs/starship.nix
+    ./programs/vscode.nix
     ./programs/zsh.nix
   ];
 }

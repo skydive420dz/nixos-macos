@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   hostname,
   username,
@@ -9,6 +10,12 @@
 {
   networking.hostName = hostname;
   nixpkgs.hostPlatform = "aarch64-darwin";
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "vscode"
+      "vscode-extension-MS-python-vscode-pylance"
+      "vscode-extension-ms-vscode-cpptools"
+    ];
 
   users.users.${username} = {
     home = homeDirectory;
