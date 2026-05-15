@@ -18,6 +18,8 @@ in
       tab_bar_style = "powerline";
       tab_powerline_style = "round";
       cursor_trail = 10;
+      cursor_trail_decay = "0.2 0.6";
+      cursor_trail_color = "yellow";
       repaint_delay = 10;
       hide_window_decorations = "yes";
       shell_integration = "enabled";
