@@ -15,6 +15,7 @@
     };
 
     nvf.url = "github:notashelf/nvf";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
   outputs =

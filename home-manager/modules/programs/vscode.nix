@@ -1,13 +1,10 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 let
+  marketplace =
+    inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system}.vscode-marketplace-release;
+
   marketplaceExtensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-    {
-      publisher = "bbenoist";
-      name = "qml";
-      version = "1.0.0";
-      sha256 = "1ncabpljax9kr49paxy2whjwq683cjvar0z5pf00wb7ra1b6g65n";
-    }
     {
       publisher = "ms-python";
       name = "vscode-python-envs";
@@ -62,6 +59,10 @@ in
         ms-vscode.cpptools-extension-pack
         vscode-icons-team.vscode-icons
         vscodevim.vim
+        marketplace.bbenoist.qml
+        marketplace.editorconfig.editorconfig
+        marketplace.sumneko.lua
+        marketplace.theqtcompany.qt-qml
       ]) ++ marketplaceExtensions;
     };
   };
