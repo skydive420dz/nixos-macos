@@ -9,24 +9,26 @@
       start-at-login = false;
       automatically-unhide-macos-hidden-apps = true;
 
-      after-startup-command = [ ];
+      after-startup-command = [
+        "layout accordion"
+      ];
 
       enable-normalization-flatten-containers = true;
       enable-normalization-opposite-orientation-for-nested-containers = false;
-      default-root-container-layout = "tiles";
+      default-root-container-layout = "accordion";
       default-root-container-orientation = "horizontal";
-      accordion-padding = 24;
+      accordion-padding = 1;
 
       gaps = {
         inner = {
-          horizontal = 8;
-          vertical = 8;
+          horizontal = 1;
+          vertical = 1;
         };
         outer = {
-          left = 8;
-          right = 8;
-          top = 8;
-          bottom = 8;
+          left = 1;
+          right = 1;
+          top = 1;
+          bottom = 1;
         };
       };
 
