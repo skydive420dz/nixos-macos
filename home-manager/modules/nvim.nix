@@ -233,7 +233,10 @@ in
         # Added explicit treesitter block to help NixOS healthcheck
         treesitter = {
           enable = true;
-          context.enable = true;
+          context = {
+            enable = true;
+            setupOpts.enable = false;
+          };
           highlight.enable = true;
           indent.enable = true;
         };

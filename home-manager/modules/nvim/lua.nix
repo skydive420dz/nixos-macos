@@ -152,6 +152,12 @@
 
     -- Navigation Hints Toggle
     vim.keymap.set("n", "<leader>pt", "<cmd>Precognition toggle<cr>", { desc = "Toggle Hints" })
+    vim.keymap.set("n", "<leader>pc", function()
+      local ok, context = pcall(require, "treesitter-context")
+      if ok then
+        context.toggle()
+      end
+    end, { desc = "Toggle Context" })
 
     -- Trouble Diagnostics Toggle
     vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics" })
