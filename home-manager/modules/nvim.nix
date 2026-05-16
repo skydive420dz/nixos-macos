@@ -8,6 +8,9 @@ let
   inherit (lib.generators) mkLuaInline;
   theme = import ../../config/theme/tokens.nix;
   semantic = theme.semantic;
+  customLua = import ./nvim/lua.nix {
+    inherit theme semantic;
+  };
 
   qmlImportPaths = [
     "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
@@ -32,9 +35,11 @@ in
             ripgrep
             fd
             lldb # Fixes Rustaceanvim debug warning
-            pngpaste
             qt6.qtdeclarative
             qt6.qttools
+          ]
+          ++ lib.optionals stdenv.isDarwin [
+            pngpaste
           ]
           ++ lib.optionals stdenv.isLinux [
             quickshell
@@ -257,7 +262,10 @@ in
           surround.enable = true;
           leetcode-nvim.enable = true;
           multicursors.enable = true;
-          smart-splits.enable = true;
+          smart-splits = {
+            enable = true;
+            setupOpts.multiplexer_integration = mkLuaInline ''vim.env.TMUX and "tmux" or nil'';
+          };
           undotree.enable = true;
           nvim-biscuits.enable = true;
           grug-far-nvim.enable = true;
@@ -354,13 +362,13 @@ in
                 type = "group";
                 val = mkLuaInline ''
                   (function()
-	                    local dashboard = require("alpha.themes.dashboard")
-	                    return {
-	                      dashboard.button("n", "  New file", "<cmd>ene <bar> startinsert<cr>"),
-	                      dashboard.button("e", "  Explorer", "<cmd>Neotree toggle<cr>"),
-	                      dashboard.button("f", "  Find file", "<cmd>Telescope find_files<cr>"),
-	                      dashboard.button("g", "󰱼  Live grep", "<cmd>Telescope live_grep<cr>"),
-	                      dashboard.button("r", "  Recent files", "<cmd>Telescope oldfiles<cr>"),
+                    local dashboard = require("alpha.themes.dashboard")
+                    return {
+                      dashboard.button("n", "  New file", "<cmd>ene <bar> startinsert<cr>"),
+                      dashboard.button("e", "  Explorer", "<cmd>Neotree toggle<cr>"),
+                      dashboard.button("f", "  Find file", "<cmd>Telescope find_files<cr>"),
+                      dashboard.button("g", "󰱼  Live grep", "<cmd>Telescope live_grep<cr>"),
+                      dashboard.button("r", "  Recent files", "<cmd>Telescope oldfiles<cr>"),
                       dashboard.button("s", "󰆓  Load session", "<cmd>SessionManager load_session<cr>"),
                       dashboard.button("q", "  Quit", "<cmd>qa<cr>"),
                     }
@@ -397,96 +405,7 @@ in
 
         clipboard.enable = true;
 
-        luaConfigRC.themeTokens = ''
-          local theme_tokens = {
-            name = "${theme.name}",
-            foreground = "${semantic.foreground}",
-            background = "${semantic.background}",
-            surface = "${semantic.surface}",
-            border = "${semantic.border}",
-            border_active = "${semantic.borderActive}",
-            accent = "${semantic.accent}",
-            accent_alt = "${semantic.accentAlt}",
-            muted = "${semantic.muted}",
-            warning = "${semantic.warning}",
-          }
-
-          vim.g.theme_tokens = theme_tokens
-
-          local function apply_theme_token_highlights()
-            vim.api.nvim_set_hl(0, "AlphaHeader", { fg = theme_tokens.accent })
-            vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = theme_tokens.background })
-            vim.api.nvim_set_hl(0, "WhichKeyBorder", { fg = theme_tokens.border_active, bg = theme_tokens.background })
-            vim.api.nvim_set_hl(0, "WhichKey", { fg = theme_tokens.accent })
-            vim.api.nvim_set_hl(0, "WhichKeyGroup", { fg = theme_tokens.accent_alt })
-            vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = theme_tokens.foreground })
-            vim.api.nvim_set_hl(0, "WhichKeySeparator", { fg = theme_tokens.muted })
-          end
-
-          vim.api.nvim_create_autocmd("ColorScheme", {
-            pattern = "*",
-            callback = apply_theme_token_highlights,
-          })
-          apply_theme_token_highlights()
-        '';
-
-        luaConfigRC.navigation = ''
-          -- Health check path fixes
-          vim.opt.runtimepath:append(vim.fn.stdpath("data") .. "/site")
-          vim.opt.packpath:append(vim.fn.stdpath("data") .. "/site")
-
-          -- Clipboard fix
-          vim.opt.clipboard = 'unnamedplus'
-
-          -- Spelling
-          vim.opt.spell = true
-          vim.opt.spelllang = { "en_us" }
-          vim.keymap.set("n", "]s", "]s", { desc = "Next spelling error" })
-          vim.keymap.set("n", "[s", "[s", { desc = "Previous spelling error" })
-          vim.keymap.set("n", "<leader>zg", "zg", { desc = "Add word to dictionary" })
-          vim.keymap.set("n", "<leader>zw", "zw", { desc = "Mark word wrong" })
-          vim.keymap.set("n", "<leader>z=", "z=", { desc = "Spelling suggestions" })
-
-          -- Autosave changed normal file buffers after 3 seconds idle in normal mode
-          vim.opt.updatetime = 3000
-          local autosave_group = vim.api.nvim_create_augroup("NormalModeAutosave", { clear = true })
-          local autosave_pending = false
-
-          local function can_autosave()
-            return vim.bo.modified
-              and vim.bo.modifiable
-              and not vim.bo.readonly
-              and vim.bo.buftype == ""
-              and vim.fn.expand("%") ~= ""
-              and vim.fn.mode() == "n"
-          end
-
-          vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
-            group = autosave_group,
-            callback = function()
-              autosave_pending = true
-            end,
-          })
-
-          vim.api.nvim_create_autocmd("CursorHold", {
-            group = autosave_group,
-            callback = function()
-              if autosave_pending and can_autosave() then
-                local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":t")
-                autosave_pending = false
-                vim.cmd("silent! update")
-                vim.notify("Saved " .. filename, vim.log.levels.INFO, { title = "Autosave" })
-              end
-            end,
-          })
-
-          -- Navigation Hints Toggle
-          vim.keymap.set("n", "<leader>pt", "<cmd>Precognition toggle<cr>", { desc = "Toggle Hints" })
-
-          -- Trouble Diagnostics Toggle
-          vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics" })
-
-        '';
+        luaConfigRC = customLua;
 
         formatter.conform-nvim.enable = true;
         fzf-lua.enable = true;
