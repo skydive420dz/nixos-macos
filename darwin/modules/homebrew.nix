@@ -7,7 +7,7 @@
 
     onActivation = {
       autoUpdate = true;
-      cleanup = "none";
+      cleanup = "check";
       upgrade = true;
     };
 
