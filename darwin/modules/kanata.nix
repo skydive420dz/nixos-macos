@@ -7,9 +7,10 @@
 
 let
   driver = pkgs.karabiner-elements.driver;
+  driverRoot = "/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice";
   managerRoot = "/Applications/.Nix-Kanata-VirtualHIDDevice";
   manager = "${managerRoot}/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager";
-  daemon = "${driver}/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
+  daemon = "${driverRoot}/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
   configFile = "${homeDirectory}/.config/kanata/kanata.kbd";
   appRoot = "/Applications/Kanata.app";
   appBin = "${appRoot}/Contents/MacOS/Kanata";
@@ -48,6 +49,10 @@ in
   # DriverKit system extensions must live under /Applications as real files.
   # We use only Karabiner's VirtualHID driver/daemon; Karabiner-Elements itself is removed.
   system.activationScripts.preActivation.text = ''
+    rm -rf ${lib.escapeShellArg driverRoot}
+    mkdir -p ${lib.escapeShellArg "/Library/Application Support/org.pqrs"}
+    cp -R ${lib.escapeShellArg "${driver}/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice"} ${lib.escapeShellArg driverRoot}
+
     rm -rf ${lib.escapeShellArg managerRoot}
     mkdir -p ${lib.escapeShellArg managerRoot}
     cp -R ${lib.escapeShellArg "${driver}/Applications/.Karabiner-VirtualHIDDevice-Manager.app"} ${lib.escapeShellArg managerRoot}/
@@ -85,9 +90,6 @@ PLIST
   system.activationScripts.postActivation.text = ''
     echo "Activating Karabiner VirtualHIDDevice driver for Kanata..." >&2
     ${lib.escapeShellArg manager} activate || true
-
-    launchctl kickstart -k system/org.nixos.karabiner-vhid-daemon >/dev/null 2>&1 || true
-    launchctl kickstart -k system/org.nixos.kanata >/dev/null 2>&1 || true
   '';
 
   launchd.daemons.karabiner-vhid-daemon = {
@@ -106,8 +108,8 @@ PLIST
     serviceConfig = {
       Label = "org.nixos.kanata";
       ProgramArguments = [ appBin ];
-      RunAtLoad = true;
-      KeepAlive = true;
+      RunAtLoad = false;
+      KeepAlive = false;
       ProcessType = "Interactive";
       StandardOutPath = "/var/log/kanata.log";
       StandardErrorPath = "/var/log/kanata.log";
