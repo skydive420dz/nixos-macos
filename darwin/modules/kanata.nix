@@ -12,22 +12,28 @@ let
   manager = "${managerRoot}/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager";
   daemon = "${driverRoot}/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon";
   configFile = "${homeDirectory}/.config/kanata/kanata.kbd";
+
+  # Fresh macOS installs still need manual Privacy & Security approvals:
+  #   - /Applications/Kanata.app: Accessibility, Input Monitoring, Full Disk Access
+  #   - Karabiner VirtualHIDDevice: Driver Extension enabled/activated
+  # These cannot be declared reliably by nix-darwin because they live in macOS TCC/System Extension state.
   appRoot = "/Applications/Kanata.app";
   appBin = "${appRoot}/Contents/MacOS/Kanata";
+  runnerBin = "${appRoot}/Contents/MacOS/kanata-launchd";
 
-  kanataAppBin = pkgs.stdenv.mkDerivation {
-    pname = "kanata-app-bin";
+  kanataLaunchdRunner = pkgs.stdenv.mkDerivation {
+    pname = "kanata-launchd-runner";
     version = "1.0";
     dontUnpack = true;
 
     buildPhase = ''
-      cat > kanata-app.c <<'C'
+      cat > kanata-launchd.c <<'C'
       #include <stdio.h>
       #include <sys/stat.h>
       #include <unistd.h>
 
       int main(void) {
-        const char *kanata = "${pkgs.kanata}/bin/kanata";
+        const char *kanata = "${appBin}";
         const char *config = "${configFile}";
         const char *socket = "/Library/Application Support/org.pqrs/tmp/rootonly/vhidd_server";
 
@@ -45,12 +51,12 @@ let
       }
       C
 
-      $CC kanata-app.c -o Kanata
+      $CC kanata-launchd.c -o kanata-launchd
     '';
 
     installPhase = ''
       mkdir -p $out/bin
-      install -m 0755 Kanata $out/bin/Kanata
+      install -m 0755 kanata-launchd $out/bin/kanata-launchd
     '';
   };
 in
@@ -92,8 +98,10 @@ in
     </dict>
     </plist>
 PLIST
-    cp ${lib.escapeShellArg "${kanataAppBin}/bin/Kanata"} ${lib.escapeShellArg appBin}
+    cp ${lib.escapeShellArg "${pkgs.kanata}/bin/kanata"} ${lib.escapeShellArg appBin}
+    cp ${lib.escapeShellArg "${kanataLaunchdRunner}/bin/kanata-launchd"} ${lib.escapeShellArg runnerBin}
     chmod 755 ${lib.escapeShellArg appBin}
+    chmod 755 ${lib.escapeShellArg runnerBin}
     /usr/bin/codesign --force --deep --sign - ${lib.escapeShellArg appRoot} >/dev/null 2>&1 || true
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f ${lib.escapeShellArg appRoot} >/dev/null 2>&1 || true
   '';
@@ -133,7 +141,7 @@ PLIST
   launchd.daemons.kanata = {
     serviceConfig = {
       Label = "org.nixos.kanata";
-      ProgramArguments = [ appBin ];
+      ProgramArguments = [ runnerBin ];
       RunAtLoad = true;
       KeepAlive = false;
       ProcessType = "Interactive";
