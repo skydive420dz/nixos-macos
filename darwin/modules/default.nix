@@ -4,7 +4,7 @@
     ./darwin.nix
     ./defaults.nix
     ./homebrew.nix
-    ./karabiner.nix
+    ./kanata.nix
     ./packages.nix
   ];
 }
