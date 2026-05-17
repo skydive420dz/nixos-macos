@@ -23,11 +23,22 @@ let
     buildPhase = ''
       cat > kanata-app.c <<'C'
       #include <stdio.h>
+      #include <sys/stat.h>
       #include <unistd.h>
 
       int main(void) {
         const char *kanata = "${pkgs.kanata}/bin/kanata";
         const char *config = "${configFile}";
+        const char *socket = "/Library/Application Support/org.pqrs/tmp/rootonly/vhidd_server";
+
+        for (int i = 0; i < 100; i++) {
+          struct stat st;
+          if (stat(socket, &st) == 0 && S_ISSOCK(st.st_mode)) {
+            break;
+          }
+          usleep(200000);
+        }
+
         execl(kanata, "kanata", "--cfg", config, (char *)NULL);
         perror("execl");
         return 1;
@@ -104,11 +115,26 @@ PLIST
     };
   };
 
+  launchd.daemons.karabiner-vhid-manager = {
+    serviceConfig = {
+      Label = "org.nixos.karabiner-vhid-manager";
+      ProgramArguments = [
+        manager
+        "activate"
+      ];
+      RunAtLoad = true;
+      KeepAlive = false;
+      ProcessType = "Interactive";
+      StandardOutPath = "/var/log/kanata-vhid-manager.log";
+      StandardErrorPath = "/var/log/kanata-vhid-manager.log";
+    };
+  };
+
   launchd.daemons.kanata = {
     serviceConfig = {
       Label = "org.nixos.kanata";
       ProgramArguments = [ appBin ];
-      RunAtLoad = false;
+      RunAtLoad = true;
       KeepAlive = false;
       ProcessType = "Interactive";
       StandardOutPath = "/var/log/kanata.log";
