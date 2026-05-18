@@ -173,6 +173,7 @@
     -- Pane and Neo-tree navigation
     vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle reveal_force_cwd<cr>", { desc = "Toggle Neo-tree" })
     vim.keymap.set("n", "<leader>E", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Focus Neo-tree" })
+    vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<cr>", { desc = "Toggle Undotree" })
 
     -- Navigation Hints Toggle
     vim.keymap.set("n", "<leader>pt", "<cmd>Precognition toggle<cr>", { desc = "Toggle Hints" })
