@@ -61,6 +61,14 @@
     -- Clipboard fix
     vim.opt.clipboard = 'unnamedplus'
 
+    -- Persistent undo history for Undotree
+    local undo_dir = vim.fn.stdpath("state") .. "/undo"
+    vim.fn.mkdir(undo_dir, "p")
+    vim.opt.undofile = true
+    vim.opt.undodir = undo_dir .. "//"
+    vim.opt.undolevels = 10000
+    vim.opt.undoreload = 10000
+
     -- Neovim terminals inherit from the Neovim process, so recover the
     -- Hyprland instance when Neovim starts from a stale environment.
     if (vim.env.HYPRLAND_INSTANCE_SIGNATURE == nil or vim.env.HYPRLAND_INSTANCE_SIGNATURE == "") and vim.env.XDG_RUNTIME_DIR then
