@@ -28,6 +28,22 @@
       vim.api.nvim_set_hl(0, "WhichKeyGroup", { fg = theme_tokens.accent_alt })
       vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = theme_tokens.foreground })
       vim.api.nvim_set_hl(0, "WhichKeySeparator", { fg = theme_tokens.muted })
+
+      local transparent_groups = {
+        "Normal",
+        "NormalNC",
+        "NormalFloat",
+        "FloatBorder",
+        "SignColumn",
+        "EndOfBuffer",
+        "NeoTreeNormal",
+        "NeoTreeNormalNC",
+        "NeoTreeEndOfBuffer",
+      }
+
+      for _, group in ipairs(transparent_groups) do
+        vim.api.nvim_set_hl(0, group, { bg = "NONE" })
+      end
     end
 
     vim.api.nvim_create_autocmd("ColorScheme", {
