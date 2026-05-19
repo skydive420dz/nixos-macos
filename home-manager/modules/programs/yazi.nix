@@ -5,6 +5,15 @@ let
   theme = import ../../../config/theme/tokens.nix;
   colors = theme.palette;
   semantic = theme.semantic;
+  yaziWithFullFfmpeg = pkgs.symlinkJoin {
+    name = "yazi-with-full-ffmpeg";
+    paths = [ pkgs.yazi ];
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/yazi \
+        --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg-full ]}
+    '';
+  };
 
   tokenizedTheme =
     builtins.replaceStrings
@@ -71,7 +80,10 @@ in
 {
   programs.yazi = {
     enable = true;
-    package = pkgs.yazi;
+    # The Home Manager/Yazi wrapper adds ffmpeg-headless after extraPackages,
+    # which shadows the working profile ffmpeg on macOS and breaks video
+    # thumbnail probing. This inner wrapper puts ffmpeg-full back in front.
+    package = yaziWithFullFfmpeg;
     enableZshIntegration = true;
     shellWrapperName = "y";
 
