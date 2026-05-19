@@ -5,13 +5,30 @@ let
   theme = import ../../../config/theme/tokens.nix;
   colors = theme.palette;
   semantic = theme.semantic;
+  yaziRuntimeDeps = with pkgs; [
+    chafa
+    fd
+    ffmpeg-full
+    ffmpegthumbnailer
+    file
+    fzf
+    imagemagick
+    jq
+    ouch
+    _7zz
+    poppler-utils
+    resvg
+    ripgrep
+    zoxide
+  ];
+
   yaziWithFullFfmpeg = pkgs.symlinkJoin {
     name = "yazi-with-full-ffmpeg";
-    paths = [ pkgs.yazi ];
+    paths = [ pkgs.yazi-unwrapped ];
     buildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/yazi \
-        --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.ffmpeg-full ]}
+        --prefix PATH : ${pkgs.lib.makeBinPath yaziRuntimeDeps}
     '';
   };
 
@@ -87,14 +104,7 @@ in
     enableZshIntegration = true;
     shellWrapperName = "y";
 
-    extraPackages = with pkgs; [
-      fd
-      ffmpegthumbnailer
-      jq
-      ouch
-      poppler
-      ripgrep
-    ];
+    extraPackages = yaziRuntimeDeps;
 
     settings = builtins.fromTOML (builtins.readFile "${yaziConfig}/yazi.toml");
     keymap = builtins.fromTOML (builtins.readFile "${yaziConfig}/keymap.toml");
