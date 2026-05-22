@@ -61,6 +61,15 @@
     -- Clipboard fix
     vim.opt.clipboard = 'unnamedplus'
 
+    local yank_highlight_group = vim.api.nvim_create_augroup("UserYankHighlight", { clear = true })
+    vim.api.nvim_create_autocmd("TextYankPost", {
+      group = yank_highlight_group,
+      desc = "Highlight yanked text",
+      callback = function()
+        vim.hl.on_yank()
+      end,
+    })
+
     -- Persistent undo history for Undotree
     local undo_dir = vim.fn.stdpath("state") .. "/undo"
     vim.fn.mkdir(undo_dir, "p")

@@ -30,10 +30,35 @@ in
         extraPackages =
           with pkgs;
           [
+            # General editor/project utilities.
             tree-sitter # Satisfies tree-sitter-cli requirement
-            gcc
             ripgrep
             fd
+
+            # Enabled language support should be operational when Neovim opens a project.
+            # Project flakes can still override versions for repo-specific work.
+            bash-language-server
+            basedpyright
+            clang-tools
+            cargo
+            gcc
+            jdt-language-server
+            lua-language-server
+            marksman
+            nixd
+            nixfmt
+            nodejs
+            prettier
+            rustc
+            rust-analyzer
+            shfmt
+            stylua
+            taplo
+            typescript
+            typescript-language-server
+            vscode-langservers-extracted
+
+            # Debuggers and framework-specific tools.
             lldb # Fixes Rustaceanvim debug warning
             qt6.qtdeclarative
             qt6.qttools
@@ -55,6 +80,20 @@ in
 
         opts = {
           expandtab = true;
+          ignorecase = true;
+          inccommand = "split";
+          laststatus = 3;
+          number = true;
+          relativenumber = true;
+          scrolloff = 8;
+          shiftwidth = 4;
+          signcolumn = "yes";
+          smartcase = true;
+          smartindent = true;
+          softtabstop = 4;
+          splitbelow = true;
+          splitright = true;
+          tabstop = 4;
           wrap = false; # Fixes cinnamon.nvim 'wrap' warning
         };
 
@@ -137,6 +176,10 @@ in
           rust = {
             enable = true;
             extensions.crates-nvim.enable = true;
+            lsp = {
+              enable = true;
+              package = pkgs.rust-analyzer;
+            };
           };
           bash = {
             enable = true;
@@ -204,7 +247,29 @@ in
         };
         mini.icons.enable = true;
 
-        statusline.lualine.enable = true;
+        statusline.lualine = {
+          enable = true;
+          activeSection.a = [
+            ''
+              {
+                "mode",
+                icons_enabled = true,
+                icon = "",
+                separator = {
+                  left = '▎',
+                  right = ''
+                },
+              }
+            ''
+            ''
+              {
+                "",
+                draw_empty = true,
+                separator = { left = '', right = '' }
+              }
+            ''
+          ];
+        };
         autocomplete.blink-cmp = {
           enable = true;
           setupOpts.keymap = {
