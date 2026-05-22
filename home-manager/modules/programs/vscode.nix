@@ -60,8 +60,15 @@ in
         vscode-icons-team.vscode-icons
         vscodevim.vim
         marketplace.bbenoist.qml
+        marketplace.davidanson.vscode-markdownlint
         marketplace.editorconfig.editorconfig
+        marketplace.fireblast.hyprlang-vscode
+        marketplace.github.copilot-chat
+        marketplace.mads-hartmann.bash-ide-vscode
+        marketplace.malmaud.tmux
+        marketplace.rszyma.vscode-kanata
         marketplace.sumneko.lua
+        marketplace.theqtcompany.qt-core
         marketplace.theqtcompany.qt-qml
       ]) ++ marketplaceExtensions;
     };
