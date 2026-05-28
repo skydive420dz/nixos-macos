@@ -9,6 +9,7 @@
   home = {
     inherit username homeDirectory;
     stateVersion = "25.11";
+    enableNixpkgsReleaseCheck = false;
 
     packages = with pkgs; [
       bitwarden-cli
