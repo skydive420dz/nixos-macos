@@ -18,7 +18,7 @@ let
   ++ lib.optionals pkgs.stdenv.isLinux [
     "${pkgs.quickshell}/lib/qt-6/qml"
   ];
-  qmlImportArgs = lib.concatMapStringsSep " " (path: "-I ${path}") qmlImportPaths;
+  qmlImportArgs = lib.concatMapStringsSep " " (path: "-I ${lib.escapeShellArg path}") qmlImportPaths;
 in
 {
   programs.nvf = {
@@ -482,7 +482,7 @@ in
 
           images = {
             image-nvim.enable = false;
-            img-clip.enable = true;
+            img-clip.enable = false;
           };
         };
 
