@@ -254,6 +254,11 @@
     vim.keymap.set({ "n", "x" }, "<leader>la", code_action, { desc = "Code action" })
     vim.keymap.set("n", "<leader>lf", format_buffer, { desc = "Format buffer" })
     vim.keymap.set("n", "<leader>lF", "<cmd>ConformInfo<cr>", { desc = "Conform info" })
+    vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
+    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
+    vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "References" })
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover docs" })
 
     vim.keymap.set("n", "<leader>pl", "<cmd>Lazy<cr>", { desc = "Lazy" })
     vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<cr>", { desc = "Toggle terminal" })
@@ -269,12 +274,22 @@
         vim.keymap.set("n", "<leader>ln", open_navbuddy, vim.tbl_extend("force", opts, { desc = "Navbuddy" }))
         vim.keymap.set("n", "<leader>lr", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
         vim.keymap.set({ "n", "x" }, "<leader>la", code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
+        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend("force", opts, { desc = "Go to declaration" }))
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, vim.tbl_extend("force", opts, { desc = "Go to implementation" }))
+        vim.keymap.set("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", opts, { desc = "References" }))
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Hover docs" }))
       end,
     })
 
     local ok_which_key, which_key = pcall(require, "which-key")
     if ok_which_key then
       which_key.add({
+        { "g", group = "󰁔 Go / LSP" },
+        { "gd", desc = "Go to definition" },
+        { "gD", desc = "Go to declaration" },
+        { "gi", desc = "Go to implementation" },
+        { "gr", desc = "References" },
         { "<leader>b", group = "󰓩 Buffers" },
         { "<leader>bm", group = "󰁌 Move Buffer" },
         { "<leader>bs", group = "󰒺 Sort Buffers" },
