@@ -10,3 +10,6 @@ result-*
 *.log
 
 experiments/
+
+# Doom runtime/cache state belongs outside git.
+config/doom/.local/

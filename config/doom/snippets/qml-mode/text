@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Text
+# key: text
+# --
+Text {
+  text: ${1:"${2:text}"}
+  color: ${3:Theme.foreground}
+
+  $0
+}

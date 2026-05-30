@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: property
+# key: prop
+# --
+property ${1:var} ${2:name}: ${3:value}
+$0

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Connections
+# key: conn
+# --
+Connections {
+  target: ${1:target}
+
+  function on${2:Signal}(${3}) {
+    $0
+  }
+}

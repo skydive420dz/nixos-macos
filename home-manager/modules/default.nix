@@ -6,6 +6,7 @@
     ./home.nix
     ./nvim.nix
     ./programs/bat.nix
+    ./programs/emacs.nix
     ./programs/fzf.nix
     ./programs/git.nix
     ./programs/kanata.nix

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Quickshell Variants
+# key: variants
+# --
+Variants {
+  model: ${1:Quickshell.screens}
+
+  delegate: ${2:Item} {
+    $0
+  }
+}
