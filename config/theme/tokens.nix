@@ -1,60 +1,91 @@
 let
-  palette = {
-    rosewater = "#f5e0dc";
-    flamingo = "#f2cdcd";
-    pink = "#f5c2e7";
-    mauve = "#cba6f7";
-    red = "#f38ba8";
-    maroon = "#eba0ac";
-    peach = "#fab387";
-    yellow = "#f9e2af";
-    green = "#a6e3a1";
-    teal = "#94e2d5";
-    sky = "#89dceb";
-    sapphire = "#74c7ec";
-    blue = "#89b4fa";
-    lavender = "#b4befe";
-    text = "#cdd6f4";
-    subtext1 = "#bac2de";
-    subtext0 = "#a6adc8";
-    overlay2 = "#9399b2";
-    overlay1 = "#7f849c";
-    overlay0 = "#6c7086";
-    surface2 = "#585b70";
-    surface1 = "#45475a";
-    surface0 = "#313244";
-    base = "#1e1e2e";
-    mantle = "#181825";
-    crust = "#11111b";
+  palette = rec {
+    bg = "#1a1d21";
+    bgAlt = "#22262b";
+    base0 = "#0f1114";
+    base1 = "#171a1e";
+    base2 = "#1f2228";
+    base3 = "#282c34";
+    base4 = "#3d424a";
+    base5 = "#515761";
+    base6 = "#676d77";
+    base7 = "#8b919a";
+    base8 = "#e0dcd4";
+    fg = "#f0efeb";
+    fgAlt = "#ccc4b4";
+    red = "#cdacac";
+    orange = "#ccc4b4";
+    green = "#b8c4b8";
+    blue = "#b4bcc4";
+    cyan = "#b4c0c8";
+    yellow = "#d4ccb4";
+    teal = "#b4c4bc";
+    darkCyan = "#98a4ac";
+
+    # Compatibility aliases for modules that were originally Catppuccin-shaped.
+    rosewater = fgAlt;
+    flamingo = red;
+    pink = fgAlt;
+    mauve = fgAlt;
+    maroon = red;
+    peach = orange;
+    sky = cyan;
+    sapphire = darkCyan;
+    lavender = cyan;
+    text = fg;
+    subtext1 = fgAlt;
+    subtext0 = base8;
+    overlay2 = base7;
+    overlay1 = base6;
+    overlay0 = base6;
+    surface2 = base5;
+    surface1 = base4;
+    surface0 = base3;
+    base = bg;
+    mantle = bgAlt;
+    crust = base0;
   };
 in
 {
-  name = "catppuccin-mocha";
-  flavor = "mocha";
-  accent = "lavender";
+  name = "SkyNight";
+  source = "Compline";
+  flavor = "dark";
+  accent = "cyan";
 
   inherit palette;
 
   semantic = {
-    foreground = palette.text;
-    background = palette.base;
-    surface = palette.surface0;
-    surfaceStrong = palette.surface1;
-    border = palette.surface1;
-    borderActive = palette.blue;
-    accent = palette.lavender;
-    accentAlt = palette.mauve;
+    foreground = palette.fg;
+    foregroundAlt = palette.fgAlt;
+    background = palette.bg;
+    backgroundAlt = palette.bgAlt;
+    surface = palette.bgAlt;
+    surfaceStrong = palette.base3;
+    surfaceRaised = palette.base4;
+    border = palette.base4;
+    borderActive = palette.cyan;
+    accent = palette.cyan;
+    accentAlt = palette.blue;
     success = palette.green;
     warning = palette.yellow;
     danger = palette.red;
-    muted = palette.overlay0;
-    selectionForeground = palette.base;
-    selectionBackground = palette.rosewater;
+    muted = palette.base6;
+    selectionForeground = palette.bg;
+    selectionBackground = palette.cyan;
+
+    string = palette.green;
+    function = palette.cyan;
+    keyword = palette.blue;
+    number = palette.yellow;
+    type = palette.yellow;
+    builtin = palette.teal;
+    preprocessor = palette.fgAlt;
+    comment = palette.base6;
   };
 
   terminal = {
-    black = palette.surface1;
-    brightBlack = palette.surface2;
+    black = palette.bgAlt;
+    brightBlack = palette.base4;
     red = palette.red;
     brightRed = palette.red;
     green = palette.green;
@@ -63,11 +94,11 @@ in
     brightYellow = palette.yellow;
     blue = palette.blue;
     brightBlue = palette.blue;
-    magenta = palette.pink;
-    brightMagenta = palette.pink;
-    cyan = palette.teal;
+    magenta = palette.fgAlt;
+    brightMagenta = palette.fgAlt;
+    cyan = palette.cyan;
     brightCyan = palette.teal;
-    white = palette.subtext1;
-    brightWhite = palette.subtext0;
+    white = palette.fgAlt;
+    brightWhite = palette.fg;
   };
 }

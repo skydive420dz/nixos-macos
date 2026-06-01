@@ -8,8 +8,72 @@ let
   inherit (lib.generators) mkLuaInline;
   theme = import ../../config/theme/tokens.nix;
   semantic = theme.semantic;
-  customLua = import ./nvim/lua.nix {
-    inherit theme semantic;
+  terminal = theme.terminal;
+  repoPath = "${config.home.homeDirectory}/Projects/nixos-macos";
+  customLua = {
+    skyBootstrap = ''
+      vim.g.sky_theme = {
+        name = "${theme.name}",
+        flavor = "${theme.flavor}",
+        foreground = "${semantic.foreground}",
+        background = "${semantic.background}",
+        surface = "${semantic.surface}",
+        surface_strong = "${semantic.surfaceStrong}",
+        border = "${semantic.border}",
+        border_active = "${semantic.borderActive}",
+        accent = "${semantic.accent}",
+        accent_alt = "${semantic.accentAlt}",
+        muted = "${semantic.muted}",
+        success = "${semantic.success}",
+        warning = "${semantic.warning}",
+        danger = "${semantic.danger}",
+        selection_foreground = "${semantic.selectionForeground}",
+        selection_background = "${semantic.selectionBackground}",
+        string = "${semantic.string}",
+        ["function"] = "${semantic.function}",
+        keyword = "${semantic.keyword}",
+        number = "${semantic.number}",
+        type = "${semantic.type}",
+        builtin = "${semantic.builtin}",
+        preprocessor = "${semantic.preprocessor}",
+        comment = "${semantic.comment}",
+        terminal = {
+          black = "${terminal.black}",
+          bright_black = "${terminal.brightBlack}",
+          red = "${terminal.red}",
+          bright_red = "${terminal.brightRed}",
+          green = "${terminal.green}",
+          bright_green = "${terminal.brightGreen}",
+          yellow = "${terminal.yellow}",
+          bright_yellow = "${terminal.brightYellow}",
+          blue = "${terminal.blue}",
+          bright_blue = "${terminal.brightBlue}",
+          magenta = "${terminal.magenta}",
+          bright_magenta = "${terminal.brightMagenta}",
+          cyan = "${terminal.cyan}",
+          bright_cyan = "${terminal.brightCyan}",
+          white = "${terminal.white}",
+          bright_white = "${terminal.brightWhite}",
+        },
+      }
+
+      local sky_nvim = vim.fn.expand("~/.config/sky-nvim")
+      if vim.fn.isdirectory(sky_nvim) == 1 then
+        vim.opt.runtimepath:prepend(sky_nvim)
+      end
+
+      local ok_sky, sky = pcall(require, "sky")
+      if ok_sky then
+        sky.setup()
+      else
+        vim.notify("Sky live config unavailable: " .. tostring(sky), vim.log.levels.WARN, { title = "Neovim" })
+      end
+
+      local ok, err = pcall(vim.cmd.colorscheme, "sky")
+      if not ok then
+        vim.notify("Sky colorscheme unavailable: " .. tostring(err), vim.log.levels.WARN, { title = "Theme" })
+      end
+    '';
   };
 
   qmlImportPaths = [
@@ -21,6 +85,8 @@ let
   qmlImportArgs = lib.concatMapStringsSep " " (path: "-I ${lib.escapeShellArg path}") qmlImportPaths;
 in
 {
+  xdg.configFile."sky-nvim".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/nvim";
+
   programs.nvf = {
     enable = true;
     settings = {
@@ -113,10 +179,7 @@ in
 
         spellcheck = {
           enable = true;
-          languages = [
-            "en"
-            "en_us"
-          ];
+          languages = [ "en_us" ];
         };
 
         lsp = {
@@ -136,6 +199,11 @@ in
                 exec ${pkgs.qt6.qtdeclarative}/bin/qmlls ${qmlImportArgs} "$@"
               ''}/bin/qmlls-wrapped"
             ];
+            root_markers = lib.mkForce [
+              ".qmlls.ini"
+              "qmldir"
+              ".git"
+            ];
           };
         };
 
@@ -144,11 +212,7 @@ in
           ui.enable = true;
         };
 
-        theme = {
-          enable = true;
-          name = "catppuccin";
-          style = "mocha";
-        };
+        theme.enable = false;
 
         languages = {
           enableFormat = true;

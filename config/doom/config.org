@@ -12,13 +12,17 @@ Basic user metadata for Doom/Emacs features that need a name or email.
 #+end_src
 
 * Theme, Fonts, And Window
-macOS-specific frame behavior, fonts, transparency, and dashboard image.
+macOS-specific frame behavior, static SkyNight theme, fonts, transparency, and dashboard image.
 
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Iosevka Nerd Font" :size 18)
+(load-file (expand-file-name "theme.el" doom-user-dir))
+
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 18)
       doom-variable-pitch-font (font-spec :family "Inter" :size 18)
-      doom-theme 'doom-nord
+      doom-theme (sk/current-doom-theme)
       display-line-numbers-type 'relative)
+
+(sk/load-sky-theme)
 
 (add-to-list 'default-frame-alist '(undecorated . t))
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -30,6 +34,30 @@ macOS-specific frame behavior, fonts, transparency, and dashboard image.
 (setq frame-resize-pixelwise t)
 
 (setq fancy-splash-image (expand-file-name "assets/emacs-logo.png" doom-user-dir))
+#+end_src
+
+* Editing Defaults
+Keep indentation predictable and Vim-like across the languages we care about.
+
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil
+              tab-width 2)
+(setq standard-indent 2)
+(electric-indent-mode 1)
+
+(setq-default c-basic-offset 2
+              css-indent-offset 2
+              js-indent-level 2
+              sh-basic-offset 2)
+
+(after! lua-mode
+  (setq lua-indent-level 2))
+
+(after! qml-mode
+  (setq qml-indent-level 2))
+
+(after! rust-mode
+  (setq rust-indent-offset 2))
 #+end_src
 
 * Spellcheck
@@ -49,6 +77,10 @@ Small utility functions used by later sections.
 #+begin_src emacs-lisp
 (defun sk/disable-line-numbers ()
   (display-line-numbers-mode -1))
+
+(map! :leader
+      :desc "Reload Sky theme"
+      "h r t" #'sk/load-sky-theme)
 #+end_src
 
 * Evil
@@ -113,44 +145,20 @@ Keep Doom's modeline simple, but style it closer to the Vim/NVF look: clear acti
         doom-modeline-vcs-max-length 24
         doom-modeline-modal-icon nil
         doom-modeline-enable-word-count nil)
-  (custom-set-faces!
-    '(mode-line :background "#313244"
-                :foreground "#cdd6f4"
-                :box nil)
-    '(mode-line-inactive :background "#1e1e2e"
-                         :foreground "#6c7086"
-                         :box nil)
-    '(doom-modeline-bar :background "#b4befe")
-    '(doom-modeline-bar-inactive :background "#45475a")
-    '(doom-modeline-buffer-file :foreground "#cdd6f4"
-                                :weight medium)
-    '(doom-modeline-buffer-modified :foreground "#f9e2af"
-                                    :weight bold)
-    '(doom-modeline-info :foreground "#a6e3a1")
-    '(doom-modeline-warning :foreground "#f9e2af")
-    '(doom-modeline-urgent :foreground "#f38ba8")))
+  (sk/load-sky-theme))
 #+end_src
 
 * Highlight Faces
-macOS still uses inline Nord-ish colors here instead of the NixOS token wrapper.
+Apply SkyNight token colors to syntax, line numbers, selections, Evil goggles, and Avy hints.
 
 #+begin_src emacs-lisp
-(custom-set-faces!
-  '(font-lock-keyword-face :foreground "#81a1c1" :weight bold)
-  '(font-lock-function-name-face :foreground "#88c0d0")
-  '(font-lock-variable-name-face :foreground "#d8dee9")
-  '(font-lock-string-face :foreground "#a3be8c")
-  '(font-lock-comment-face :foreground "#616e88" :slant italic)
-  '(font-lock-constant-face :foreground "#b48ead")
-  '(font-lock-builtin-face :foreground "#8fbcbb")
-  '(font-lock-type-face :foreground "#ebcb8b")
-  '(font-lock-preprocessor-face :foreground "#d08770")
-  '(font-lock-warning-face :foreground "#bf616a" :weight bold)
-  '(region :foreground "#eceff4" :background "#3b4252"))
+(after! evil-goggles
+  (setq evil-goggles-duration 0.18
+        evil-goggles-pulse nil)
+  (sk/load-sky-theme))
 
-(when (facep 'font-lock-number-face)
-  (custom-set-faces!
-    '(font-lock-number-face :foreground "#b48ead")))
+(after! avy
+  (sk/load-sky-theme))
 #+end_src
 
 * Org
@@ -190,16 +198,46 @@ Configure notes, captures, and executable Org Babel blocks.
 Use zsh in vterm, keep terminal buffers clean, and make Dired list directories first.
 
 #+begin_src emacs-lisp
-(setq vterm-shell "zsh"
+(setq vterm-module-cmake-args "-DUSE_SYSTEM_LIBVTERM=Off"
+      vterm-always-compile-module t
+      vterm-shell "zsh"
       dired-listing-switches "-alh --group-directories-first")
 
 (after! vterm
+  (sk/load-sky-theme)
+  (add-hook 'vterm-mode-hook #'evil-insert-state)
   (add-hook 'vterm-mode-hook #'sk/disable-line-numbers))
 
 (dolist (hook '(term-mode-hook
                 shell-mode-hook
                 eshell-mode-hook))
   (add-hook hook #'sk/disable-line-numbers))
+#+end_src
+
+* Formatting
+Use Apheleia/format-on-save for code buffers, while skipping prose and terminal buffers.
+
+#+begin_src emacs-lisp
+(after! apheleia
+  (setq +format-on-save-disabled-modes
+        '(org-mode
+          doom-docs-org-mode
+          markdown-mode
+          text-mode
+          vterm-mode))
+  (setf (alist-get 'c-mode apheleia-mode-alist) 'clang-format
+        (alist-get 'c-ts-mode apheleia-mode-alist) 'clang-format
+        (alist-get 'c++-mode apheleia-mode-alist) 'clang-format
+        (alist-get 'c++-ts-mode apheleia-mode-alist) 'clang-format
+        (alist-get 'lua-mode apheleia-mode-alist) 'stylua
+        (alist-get 'nix-mode apheleia-mode-alist) 'nixfmt
+        (alist-get 'nix-ts-mode apheleia-mode-alist) 'nixfmt
+        (alist-get 'qml-mode apheleia-mode-alist) 'qmlformat
+        (alist-get 'rust-mode apheleia-mode-alist) 'rustfmt
+        (alist-get 'rust-ts-mode apheleia-mode-alist) 'rustfmt
+        (alist-get 'sh-mode apheleia-mode-alist) 'shfmt)
+  (setf (alist-get 'qmlformat apheleia-formatters)
+        '("qmlformat" "--indent-width" "2" "-w" "-1" filepath)))
 #+end_src
 
 * LSP And Harper
@@ -212,14 +250,15 @@ Register Harper for prose diagnostics in Org, Markdown, and text buffers.
         lsp-semantic-tokens-enable t)
   (add-hook 'qml-mode-hook #'lsp-deferred)
   (add-to-list 'lsp-language-id-configuration '(org-mode . "org"))
+  (add-to-list 'lsp-language-id-configuration '(doom-docs-org-mode . "org"))
   (add-to-list 'lsp-language-id-configuration '(markdown-mode . "markdown"))
-  (add-to-list 'lsp-language-id-configuration '(text-mode . "text"))
+  (add-to-list 'lsp-language-id-configuration '(text-mode . "plaintext"))
   (lsp-register-client
    (make-lsp-client
     :new-connection (lsp-stdio-connection '("harper-ls" "--stdio"))
-    :activation-fn (lsp-activate-on "org" "markdown" "text")
+    :activation-fn (lsp-activate-on "org" "markdown" "plaintext")
     :server-id 'harper-ls))
-  (dolist (hook '(org-mode-hook markdown-mode-hook text-mode-hook))
+  (dolist (hook '(org-mode-hook doom-docs-org-mode-hook markdown-mode-hook text-mode-hook))
     (add-hook hook #'lsp-deferred)))
 #+end_src
 

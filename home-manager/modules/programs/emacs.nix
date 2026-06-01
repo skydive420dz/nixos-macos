@@ -10,9 +10,11 @@ let
   repoPath = "${homeDirectory}/Projects/nixos-macos";
   doomDir = "${config.home.homeDirectory}/.config/doom";
   emacsDir = "${config.home.homeDirectory}/.config/emacs";
-  aspellWithEnglish = pkgs.aspellWithDicts (dicts: with dicts; [
-    en
-  ]);
+  aspellWithEnglish = pkgs.aspellWithDicts (
+    dicts: with dicts; [
+      en
+    ]
+  );
   qmlImportPaths = [
     "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
   ];
@@ -45,14 +47,23 @@ in
     gnumake
     gcc
     libtool
+    autoconf
+    automake
     pkg-config
 
     # Language server support for the Emacs experiment.
     lua
     lua-language-server
+    stylua
     qt6.qtlanguageserver
     rust-analyzer
+    rustc
+    cargo
+    rustfmt
     clang-tools
+    shellcheck
+    shfmt
+    glslang
 
     (writeShellScriptBin "qmlls-wrapped" ''
       exec ${qt6.qtdeclarative}/bin/qmlls ${qmlImportArgs} "$@"

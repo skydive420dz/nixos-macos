@@ -6,3 +6,4 @@
 
 (package! flycheck-inline)
 (package! ob-rust)
+(package! evil-snipe :disable t)

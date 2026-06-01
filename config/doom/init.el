@@ -21,6 +21,7 @@
        (evil +everywhere)
        file-templates
        fold
+       (format +onsave)
        snippets
 
        :emacs
@@ -42,6 +43,7 @@
        lookup
        lsp
        magit
+       tree-sitter
 
        :lang
        emacs-lisp

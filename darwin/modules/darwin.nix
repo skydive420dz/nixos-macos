@@ -64,6 +64,7 @@
   fonts.packages = [
     pkgs.inter
     pkgs.nerd-fonts.iosevka
+    pkgs.nerd-fonts.jetbrains-mono
     pkgs.nerd-fonts.meslo-lg
     pkgs.nerd-fonts.symbols-only
   ];
