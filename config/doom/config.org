@@ -8,32 +8,72 @@ Basic user metadata for Doom/Emacs features that need a name or email.
 ;;; config.el -*- lexical-binding: t; -*-
 
 (setq user-full-name "skydive420dz"
-      user-mail-address "")
+      user-mail-address "r0liveira@icloud.com")
 #+end_src
 
-* Theme, Fonts, And Window
-macOS-specific frame behavior, static SkyNight theme, fonts, transparency, and dashboard image.
+* Theme And Fonts
+Load our local color tokens, set the Doom theme, fonts, line numbers, transparency, and dashboard image.
 
 #+begin_src emacs-lisp
 (load-file (expand-file-name "theme.el" doom-user-dir))
 
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 18)
-      doom-variable-pitch-font (font-spec :family "Inter" :size 18)
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 16)
+      doom-variable-pitch-font (font-spec :family "Inter" :size 16)
       doom-theme (sk/current-doom-theme)
       display-line-numbers-type 'relative)
 
 (sk/load-sky-theme)
 
-(add-to-list 'default-frame-alist '(undecorated . t))
-(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-(add-to-list 'default-frame-alist '(ns-appearance . dark))
-(add-to-list 'default-frame-alist '(alpha-background . 86))
-(add-to-list 'default-frame-alist '(alpha . 92))
-(set-frame-parameter nil 'alpha-background 86)
-(set-frame-parameter nil 'alpha 92)
+(add-to-list 'default-frame-alist '(alpha-background . 98))
+(add-to-list 'default-frame-alist '(alpha . 98))
+(set-frame-parameter nil 'alpha-background 98)
+(set-frame-parameter nil 'alpha 98)
 (setq frame-resize-pixelwise t)
 
 (setq fancy-splash-image (expand-file-name "assets/emacs-logo.png" doom-user-dir))
+#+end_src
+
+* Terminal Frames
+Terminal clients share the daemon config, but they render through the terminal. Keep their faces aligned with the active Sky theme so they do not fall back to terminal-default blue/black palettes.
+
+#+begin_src emacs-lisp
+(defconst sk/terminal-frame-colors
+  '((background . "color-234")
+    (foreground . "color-255")
+    (mode-line . "color-235")
+    (mode-line-inactive . "color-233")
+    (muted . "color-245")
+    (border . "color-237"))
+  "256-color-safe fallback colors for terminal Emacs frames.")
+
+(defun sk/terminal-frame-color (name)
+  (alist-get name sk/terminal-frame-colors))
+
+(defun sk/terminal-frame-direct-color-p (frame)
+  (> (display-color-cells frame) 256))
+
+(defun sk/frame-color (frame sky-color fallback-color)
+  (if (sk/terminal-frame-direct-color-p frame)
+      (sk/theme-color sky-color)
+    (sk/terminal-frame-color fallback-color)))
+
+(defun sk/apply-terminal-frame-theme (&optional frame)
+  (let ((target-frame (or frame (selected-frame))))
+    (with-selected-frame target-frame
+      (unless (display-graphic-p)
+        (set-frame-parameter target-frame 'background-color (sk/frame-color target-frame 'background 'background))
+        (set-frame-parameter target-frame 'foreground-color (sk/frame-color target-frame 'foreground 'foreground))
+        (set-face-background 'default (sk/frame-color target-frame 'background 'background) target-frame)
+        (set-face-foreground 'default (sk/frame-color target-frame 'foreground 'foreground) target-frame)
+        (set-face-background 'mode-line (sk/frame-color target-frame 'surface 'mode-line) target-frame)
+        (set-face-foreground 'mode-line (sk/frame-color target-frame 'foreground 'foreground) target-frame)
+        (set-face-background 'mode-line-inactive (sk/frame-color target-frame 'background-alt 'mode-line-inactive) target-frame)
+        (set-face-foreground 'mode-line-inactive (sk/frame-color target-frame 'muted 'muted) target-frame)
+        (set-face-background 'vertical-border (sk/frame-color target-frame 'border 'border) target-frame)
+        (set-face-foreground 'vertical-border (sk/frame-color target-frame 'border 'border) target-frame)))))
+
+(add-hook 'after-make-frame-functions #'sk/apply-terminal-frame-theme)
+(sk/apply-terminal-frame-theme)
 #+end_src
 
 * Editing Defaults
@@ -78,9 +118,28 @@ Small utility functions used by later sections.
 (defun sk/disable-line-numbers ()
   (display-line-numbers-mode -1))
 
+(defun sk/add-disable-line-numbers-hook (hook)
+  (remove-hook hook #'sk/disable-line-numbers)
+  (add-hook hook #'sk/disable-line-numbers t))
+
 (map! :leader
       :desc "Reload Sky theme"
       "h r t" #'sk/load-sky-theme)
+#+end_src
+
+* Line Numbers
+Keep visible line numbers for code, but remove the gutter from prose, notes, help, and file-management buffers.
+
+#+begin_src emacs-lisp
+(dolist (hook '(org-mode-hook
+                doom-docs-org-mode-hook
+                markdown-mode-hook
+                text-mode-hook
+                dired-mode-hook
+                help-mode-hook
+                helpful-mode-hook
+                Info-mode-hook))
+  (sk/add-disable-line-numbers-hook hook))
 #+end_src
 
 * Evil
@@ -91,6 +150,9 @@ Disable Doom's snipe override so =s= and =S= behave like Vim again.
   (evil-snipe-mode -1)
   (evil-snipe-override-mode -1))
 
+(after! evil-escape
+  (evil-escape-mode -1))
+
 (after! evil
   (define-key evil-normal-state-map (kbd "s") #'evil-substitute)
   (define-key evil-normal-state-map (kbd "S") #'evil-change-whole-line))
@@ -99,6 +161,39 @@ Disable Doom's snipe override so =s= and =S= behave like Vim again.
   (map! :map evil-org-mode-map
         :n "[[" #'org-previous-visible-heading
         :n "]]" #'org-next-visible-heading))
+#+end_src
+
+* Responsiveness
+Reduce small UI delays so typing, Corfu completions, LSP updates, and key-hint popups feel closer to Neovim.
+
+#+begin_src emacs-lisp
+(after! which-key
+  (setq which-key-idle-delay 0.25
+        which-key-idle-secondary-delay 0.05))
+
+(after! corfu
+  (setq corfu-auto t
+        corfu-auto-delay 0.05
+        corfu-auto-prefix 2
+        corfu-cycle t
+        corfu-preview-current nil)
+  (global-corfu-mode 1))
+
+(after! cape
+  (defun sk/add-cape-completions ()
+    "Add general completion sources for buffers without rich LSP data."
+    (add-hook 'completion-at-point-functions #'cape-file 10 t)
+    (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t)
+    (add-hook 'completion-at-point-functions #'cape-keyword 30 t))
+
+  (dolist (hook '(prog-mode-hook
+                  conf-mode-hook
+                  text-mode-hook))
+    (add-hook hook #'sk/add-cape-completions)))
+
+(after! lsp-mode
+  (setq lsp-completion-provider :none
+        lsp-idle-delay 0.15))
 #+end_src
 
 * Window Navigation
@@ -118,6 +213,81 @@ Use the same directional muscle memory as our Neovim setups for moving between w
         :i "C-l" #'evil-window-right))
 #+end_src
 
+* Workflow Polish Trial
+Borrow a few small workflow ideas from daviwil's Emacs config while keeping them Doom-native and easy to revert.
+
+#+begin_src emacs-lisp
+(set-popup-rule! "^\\*\\(?:doom:vterm-popup\\|vterm\\|terminal\\|term\\|shell\\|eshell\\).*\\*$"
+  :side 'bottom :size 0.32 :select t :quit nil :ttl nil)
+
+(set-popup-rule! "^\\*\\(?:Help\\|helpful\\|Apropos\\|Info\\|Warnings\\|Messages\\).*\\*$"
+  :side 'right :size 0.42 :select t :quit t :ttl nil)
+
+(set-popup-rule! "^\\*\\(?:xref\\|Occur\\|grep\\|rg\\|compilation\\|Flycheck errors\\).*\\*$"
+  :side 'bottom :size 0.30 :select t :quit nil :ttl nil)
+
+(setq xref-search-program 'ripgrep
+      grep-command "rg -nS --no-heading ")
+
+(defvar sk/centered-text-width 96
+  "Target text width for centered prose buffers.")
+
+(defun sk/centered-text-adjust-margins ()
+  (when sk/centered-text-mode
+    (let ((margin (max 0 (truncate (/ (- (window-width) sk/centered-text-width) 2.0)))))
+      (set-window-margins nil margin margin))))
+
+(define-minor-mode sk/centered-text-mode
+  "Center prose buffers with window margins."
+  :lighter " Center"
+  (if sk/centered-text-mode
+      (progn
+        (visual-line-mode 1)
+        (add-hook 'window-configuration-change-hook #'sk/centered-text-adjust-margins nil t)
+        (sk/centered-text-adjust-margins))
+    (remove-hook 'window-configuration-change-hook #'sk/centered-text-adjust-margins t)
+    (set-window-margins nil nil nil)))
+
+(dolist (hook '(org-mode-hook
+                doom-docs-org-mode-hook
+                markdown-mode-hook
+                text-mode-hook))
+  (add-hook hook #'sk/centered-text-mode))
+#+end_src
+
+* Navigation And Projects
+Shape Doom's existing Consult and Projectile commands into a small NVF-like command layer.
+
+#+begin_src emacs-lisp
+(defun sk/project-root ()
+  "Return the current Projectile project root, or nil outside a project."
+  (when (bound-and-true-p projectile-mode)
+    (ignore-errors (projectile-project-root))))
+
+(defun sk/project-vterm ()
+  "Open vterm from the project root when possible."
+  (interactive)
+  (let ((default-directory (or (sk/project-root) default-directory)))
+    (+vterm/here)))
+
+(defun sk/project-notes ()
+  "Open the dotfiles project notes."
+  (interactive)
+  (find-file (expand-file-name "org/dotfiles.org" doom-user-dir)))
+
+(map! :leader
+      (:prefix ("s" . "search")
+       :desc "Symbols in buffer" "i" #'consult-imenu
+       :desc "Symbols in open buffers" "I" #'consult-imenu-multi)
+      (:prefix ("p" . "project")
+       :desc "Find file" "f" #'projectile-find-file
+       :desc "Search project" "s" #'projectile-ripgrep
+       :desc "Switch project" "p" #'projectile-switch-project
+       :desc "Magit status" "g" #'magit-status
+       :desc "Project terminal" "t" #'sk/project-vterm
+       :desc "Project notes" "n" #'sk/project-notes))
+#+end_src
+
 * Diagnostics
 Show Flycheck diagnostics inline, closer to Neovim's virtual text behavior.
 
@@ -131,7 +301,7 @@ Show Flycheck diagnostics inline, closer to Neovim's virtual text behavior.
 #+end_src
 
 * Mode Line
-Keep Doom's modeline simple, but style it closer to the Vim/NVF look: clear active state, muted inactive state, compact file names, and visible status colors.
+Keep Doom's modeline simple, but style it closer to the Vim/NVF look: clear active state, muted inactive state, compact file names, and token-colored status segments.
 
 #+begin_src emacs-lisp
 (after! doom-modeline
@@ -149,9 +319,39 @@ Keep Doom's modeline simple, but style it closer to the Vim/NVF look: clear acti
 #+end_src
 
 * Highlight Faces
-Apply SkyNight token colors to syntax, line numbers, selections, Evil goggles, and Avy hints.
+Apply our token colors to syntax, line numbers, selections, Evil goggles, and Avy hints.
 
 #+begin_src emacs-lisp
+(use-package! rainbow-mode
+  :hook ((css-mode
+          css-ts-mode
+          emacs-lisp-mode
+          js-mode
+          js-ts-mode
+          json-mode
+          json-ts-mode
+          lua-mode
+          lua-ts-mode
+          nix-mode
+          nix-ts-mode
+          org-mode
+          qml-mode
+          qml-ts-mode
+          typescript-mode
+          typescript-ts-mode
+          web-mode) . rainbow-mode))
+
+(use-package! indent-bars
+  :hook ((prog-mode conf-mode) . indent-bars-mode)
+  :config
+  (setq indent-bars-color '(highlight :face-bg t :blend 0.18)
+        indent-bars-color-by-depth nil
+        indent-bars-highlight-current-depth nil
+        indent-bars-display-on-blank-lines nil
+        indent-bars-pattern "."
+        indent-bars-width-frac 0.12
+        indent-bars-pad-frac 0.12))
+
 (after! evil-goggles
   (setq evil-goggles-duration 0.18
         evil-goggles-pulse nil)
@@ -185,6 +385,20 @@ Configure notes, captures, and executable Org Babel blocks.
          "* %?\n  %U\n")))
 
 (after! org
+  (setq org-ellipsis "")
+  (require 'org-tempo)
+  (dolist (template '(("sh" . "src sh")
+                      ("el" . "src emacs-lisp")
+                      ("nix" . "src nix")
+                      ("lua" . "src lua")
+                      ("qml" . "src qml")
+                      ("rs" . "src rust")
+                      ("c" . "src c")
+                      ("json" . "src json")
+                      ("yaml" . "src yaml")))
+    (setq org-structure-template-alist
+          (assoc-delete-all (car template) org-structure-template-alist))
+    (add-to-list 'org-structure-template-alist template))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((C . t)
@@ -201,17 +415,60 @@ Use zsh in vterm, keep terminal buffers clean, and make Dired list directories f
 (setq vterm-module-cmake-args "-DUSE_SYSTEM_LIBVTERM=Off"
       vterm-always-compile-module t
       vterm-shell "zsh"
-      dired-listing-switches "-alh --group-directories-first")
+      dired-listing-switches "-alh --group-directories-first"
+      delete-by-moving-to-trash t)
+
+(after! dired
+  (setq dired-dwim-target t
+        dired-kill-when-opening-new-dired-buffer t
+        dired-omit-verbose nil)
+  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+  (add-hook 'dired-mode-hook #'hl-line-mode)
+  (map! :map dired-mode-map
+        :n "h" #'dired-up-directory
+        :n "l" #'dired-find-file
+        :n "RET" #'dired-find-file))
 
 (after! vterm
   (sk/load-sky-theme)
   (add-hook 'vterm-mode-hook #'evil-insert-state)
-  (add-hook 'vterm-mode-hook #'sk/disable-line-numbers))
+  (sk/add-disable-line-numbers-hook 'vterm-mode-hook))
 
 (dolist (hook '(term-mode-hook
                 shell-mode-hook
                 eshell-mode-hook))
-  (add-hook hook #'sk/disable-line-numbers))
+  (sk/add-disable-line-numbers-hook hook))
+
+;; A function for easily creating multiple buffers of 'eshell'.
+;; NOTE: `C-u M-x eshell` would also create new 'eshell' buffers.
+(defun eshell-new (name)
+  "Create new eshell buffer named NAME."
+  (interactive "sName: ")
+  (setq name (concat "$" name))
+  (eshell)
+  (rename-buffer name))
+
+(use-package! eshell-syntax-highlighting
+  :after esh-mode
+  :config
+  (eshell-syntax-highlighting-global-mode +1))
+
+;; eshell-syntax-highlighting -- adds fish/zsh-like syntax highlighting.
+;; eshell-rc-script -- your profile for eshell; like a bashrc for eshell.
+;; eshell-aliases-file -- sets an aliases file for the eshell.
+
+(setq eshell-rc-script (concat user-emacs-directory "eshell/profile")
+      eshell-aliases-file (concat user-emacs-directory "eshell/aliases")
+      eshell-history-size 5000
+      eshell-buffer-maximum-lines 5000
+      eshell-hist-ignoredups t
+      eshell-scroll-to-bottom-on-input t
+      eshell-destroy-buffer-when-process-dies t
+      eshell-visual-commands '("bash" "fish" "ssh" "top" "zsh"))
+
+(after! corfu
+  (add-hook 'eshell-mode-hook (lambda () (corfu-mode -1))))
+
 #+end_src
 
 * Formatting
@@ -246,8 +503,11 @@ Register Harper for prose diagnostics in Org, Markdown, and text buffers.
 #+begin_src emacs-lisp
 (after! lsp-mode
   (require 'lsp-qml)
-  (setq lsp-qml-server-command "qmlls-wrapped"
-        lsp-semantic-tokens-enable t)
+  (setq lsp-clients-lua-language-server-command '("lua-language-server")
+        lsp-nix-nil-auto-eval-inputs t
+        lsp-qml-server-command "qmlls-wrapped")
+  (lsp-register-custom-settings
+   '(("nil.nix.flake.autoArchive" t t)))
   (add-hook 'qml-mode-hook #'lsp-deferred)
   (add-to-list 'lsp-language-id-configuration '(org-mode . "org"))
   (add-to-list 'lsp-language-id-configuration '(doom-docs-org-mode . "org"))
@@ -260,6 +520,9 @@ Register Harper for prose diagnostics in Org, Markdown, and text buffers.
     :server-id 'harper-ls))
   (dolist (hook '(org-mode-hook doom-docs-org-mode-hook markdown-mode-hook text-mode-hook))
     (add-hook hook #'lsp-deferred)))
+
+(after! lsp-pyright
+  (setq lsp-pyright-langserver-command "basedpyright"))
 #+end_src
 
 * Magit

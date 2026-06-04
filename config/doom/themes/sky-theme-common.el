@@ -56,6 +56,19 @@
     font-lock-preprocessor-face font-lock-regexp-grouping-backslash
     font-lock-regexp-grouping-construct font-lock-string-face
     font-lock-type-face font-lock-variable-name-face font-lock-warning-face
+    tree-sitter-hl-face:attribute tree-sitter-hl-face:comment
+    tree-sitter-hl-face:constant tree-sitter-hl-face:constant.builtin
+    tree-sitter-hl-face:constructor tree-sitter-hl-face:doc
+    tree-sitter-hl-face:embedded tree-sitter-hl-face:escape
+    tree-sitter-hl-face:function tree-sitter-hl-face:function.call
+    tree-sitter-hl-face:function.macro tree-sitter-hl-face:keyword
+    tree-sitter-hl-face:label tree-sitter-hl-face:number
+    tree-sitter-hl-face:operator tree-sitter-hl-face:property
+    tree-sitter-hl-face:punctuation tree-sitter-hl-face:punctuation.bracket
+    tree-sitter-hl-face:punctution tree-sitter-hl-face:string
+    tree-sitter-hl-face:tag tree-sitter-hl-face:type
+    tree-sitter-hl-face:type.builtin tree-sitter-hl-face:variable
+    tree-sitter-hl-face:variable.parameter tree-sitter-hl-face:variable.special
     mode-line mode-line-inactive mode-line-buffer-id header-line tab-line
     tab-line-tab tab-line-tab-current tab-line-tab-inactive show-paren-match
     show-paren-mismatch trailing-whitespace whitespace-space whitespace-tab
@@ -82,7 +95,8 @@
     completions-common-part completions-first-difference vertico-current
     marginalia-documentation marginalia-key marginalia-symbol
     orderless-match-face-0 orderless-match-face-1 orderless-match-face-2
-    orderless-match-face-3 company-tooltip company-tooltip-selection
+    orderless-match-face-3 corfu-default corfu-current corfu-bar corfu-border
+    corfu-annotations corfu-deprecated company-tooltip company-tooltip-selection
     company-tooltip-common company-tooltip-annotation company-scrollbar-bg
     company-scrollbar-fg flycheck-error flycheck-warning flycheck-info
     flycheck-inline-error flycheck-inline-warning flycheck-inline-info
@@ -91,7 +105,7 @@
     lsp-ui-doc-background lsp-ui-doc-header org-block org-block-begin-line
     org-block-end-line org-code org-date org-document-info org-document-title
     org-done org-headline-done org-hide org-level-1 org-level-2 org-level-3
-    org-level-4 org-level-5 org-level-6 org-link org-meta-line
+    org-level-4 org-level-5 org-level-6 org-level-7 org-link org-meta-line
     org-special-keyword org-table org-todo org-verbatim markdown-code-face
     markdown-header-face markdown-header-face-1 markdown-header-face-2
     magit-section-heading magit-branch-current magit-branch-local
@@ -186,6 +200,32 @@
      `(font-lock-type-face ((t (:foreground ,type))))
      `(font-lock-variable-name-face ((t (:foreground ,accent-alt))))
      `(font-lock-warning-face ((t (:foreground ,danger :weight bold))))
+     `(tree-sitter-hl-face:attribute ((t (:foreground ,accent-alt))))
+     `(tree-sitter-hl-face:comment ((t (:foreground ,comment :slant italic))))
+     `(tree-sitter-hl-face:constant ((t (:foreground ,number))))
+     `(tree-sitter-hl-face:constant.builtin ((t (:foreground ,builtin :weight medium))))
+     `(tree-sitter-hl-face:constructor ((t (:foreground ,type))))
+     `(tree-sitter-hl-face:doc ((t (:foreground ,string :slant italic))))
+     `(tree-sitter-hl-face:embedded ((t (:foreground ,fg))))
+     `(tree-sitter-hl-face:escape ((t (:foreground ,warning :weight bold))))
+     `(tree-sitter-hl-face:function ((t (:foreground ,function))))
+     `(tree-sitter-hl-face:function.call ((t (:foreground ,function))))
+     `(tree-sitter-hl-face:function.macro ((t (:foreground ,preprocessor :weight medium))))
+     `(tree-sitter-hl-face:keyword ((t (:foreground ,keyword :weight bold))))
+     `(tree-sitter-hl-face:label ((t (:foreground ,accent-alt))))
+     `(tree-sitter-hl-face:number ((t (:foreground ,number))))
+     `(tree-sitter-hl-face:operator ((t (:foreground ,fg-alt))))
+     `(tree-sitter-hl-face:property ((t (:foreground ,accent-alt))))
+     `(tree-sitter-hl-face:punctuation ((t (:foreground ,muted))))
+     `(tree-sitter-hl-face:punctuation.bracket ((t (:foreground ,muted))))
+     `(tree-sitter-hl-face:punctution ((t (:foreground ,muted))))
+     `(tree-sitter-hl-face:string ((t (:foreground ,string))))
+     `(tree-sitter-hl-face:tag ((t (:foreground ,keyword :weight medium))))
+     `(tree-sitter-hl-face:type ((t (:foreground ,type))))
+     `(tree-sitter-hl-face:type.builtin ((t (:foreground ,builtin :weight medium))))
+     `(tree-sitter-hl-face:variable ((t (:foreground ,fg))))
+     `(tree-sitter-hl-face:variable.parameter ((t (:foreground ,fg-alt))))
+     `(tree-sitter-hl-face:variable.special ((t (:foreground ,accent-alt))))
      `(mode-line ((t (:background ,surface :foreground ,fg :box nil))))
      `(mode-line-inactive ((t (:background ,bg :foreground ,muted :box nil))))
      `(mode-line-buffer-id ((t (:foreground ,fg :weight bold))))
@@ -269,6 +309,12 @@
      `(orderless-match-face-1 ((t (:foreground ,warning :weight bold))))
      `(orderless-match-face-2 ((t (:foreground ,success :weight bold))))
      `(orderless-match-face-3 ((t (:foreground ,danger :weight bold))))
+     `(corfu-default ((t (:background ,surface :foreground ,fg))))
+     `(corfu-current ((t (:background ,surface-strong :foreground ,fg))))
+     `(corfu-bar ((t (:background ,border-active))))
+     `(corfu-border ((t (:background ,border))))
+     `(corfu-annotations ((t (:foreground ,muted))))
+     `(corfu-deprecated ((t (:foreground ,muted :strike-through t))))
      `(company-tooltip ((t (:background ,surface :foreground ,fg))))
      `(company-tooltip-selection ((t (:background ,surface-strong :foreground ,fg))))
      `(company-tooltip-common ((t (:foreground ,accent :weight bold))))
@@ -298,12 +344,13 @@
      `(org-done ((t (:foreground ,success :weight bold))))
      `(org-headline-done ((t (:foreground ,muted))))
      `(org-hide ((t (:foreground ,bg))))
-     `(org-level-1 ((t (:foreground ,accent :weight bold :height 1.2))))
-     `(org-level-2 ((t (:foreground ,accent-alt :weight bold :height 1.1))))
-     `(org-level-3 ((t (:foreground ,success :weight bold))))
-     `(org-level-4 ((t (:foreground ,warning :weight bold))))
-     `(org-level-5 ((t (:foreground ,type :weight bold))))
-     `(org-level-6 ((t (:foreground ,builtin :weight bold))))
+     `(org-level-1 ((t (:foreground ,accent :weight bold :height 1.7))))
+     `(org-level-2 ((t (:foreground ,accent-alt :weight bold :height 1.6))))
+     `(org-level-3 ((t (:foreground ,success :weight bold :height 1.5))))
+     `(org-level-4 ((t (:foreground ,warning :weight bold :height 1.4))))
+     `(org-level-5 ((t (:foreground ,type :weight bold :height 1.3))))
+     `(org-level-6 ((t (:foreground ,builtin :weight bold :height 1.2))))
+     `(org-level-7 ((t (:foreground ,comment :weight bold :height 1.1))))
      `(org-link ((t (:foreground ,accent :underline t))))
      `(org-meta-line ((t (:foreground ,comment :slant italic))))
      `(org-special-keyword ((t (:foreground ,muted))))

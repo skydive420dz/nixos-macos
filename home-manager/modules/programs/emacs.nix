@@ -52,9 +52,31 @@ in
     pkg-config
 
     # Language server support for the Emacs experiment.
+    nodejs
+    typescript
+    typescript-language-server
+    prettier
+    html-tidy
+    stylelint
+    jsbeautifier
     lua
     lua-language-server
     stylua
+    basedpyright
+    pipenv
+    black
+    isort
+    ruff
+    python3Packages.pyflakes
+    python3Packages.pytest
+    haskell-language-server
+    ghc
+    cabal-install
+    haskellPackages.hoogle
+    vscode-langservers-extracted
+    yaml-language-server
+    bash-language-server
+    marksman
     qt6.qtlanguageserver
     rust-analyzer
     rustc
@@ -72,6 +94,10 @@ in
     # Nix editing support for the Emacs experiment.
     nil
     nixfmt
+
+    # Optional Doom mail support, enabled to match the MSI profile.
+    mu
+    isync
 
     (writeShellScriptBin "glibtool" ''
       exec ${libtool}/bin/libtool "$@"

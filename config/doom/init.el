@@ -2,7 +2,7 @@
 
 (doom! :input
        :completion
-       company
+       (corfu +orderless)
        vertico
 
        :ui
@@ -12,7 +12,7 @@
        modeline
        ophints
        (popup +defaults)
-       vc-gutter
+       (vc-gutter +pretty)
        vi-tilde-fringe
        window-select
        workspaces
@@ -27,11 +27,13 @@
        :emacs
        dired
        electric
+       eww
        ibuffer
        undo
        vc
 
        :term
+       eshell
        vterm
 
        :checkers
@@ -46,17 +48,30 @@
        tree-sitter
 
        :lang
+       (haskell +lsp)
        emacs-lisp
-       cc
-       (json +tree-sitter)
-       (lua +tree-sitter)
-       markdown
-       (nix +tree-sitter)
+       (cc +lsp)
+       (json +lsp +tree-sitter)
+       (javascript +lsp +tree-sitter)
+       (lua +lsp +tree-sitter)
+       (markdown +lsp)
+       (nix +lsp +tree-sitter)
        (org +pretty)
+       (python +lsp +pyright +tree-sitter)
        (qt +lsp)
        (rust +lsp +tree-sitter)
-       (sh +tree-sitter)
-       (yaml +tree-sitter)
+       (sh +lsp +tree-sitter)
+       (web +lsp +tree-sitter)
+       (yaml +lsp +tree-sitter)
+
+       :email
+       (mu4e +org +gmail)
+
+       :app
+       calendar
+       emms
+       (rss +org)
 
        :config
+       literate
        (default +bindings +smartparens))
