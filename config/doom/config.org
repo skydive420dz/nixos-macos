@@ -193,7 +193,13 @@ Reduce small UI delays so typing, Corfu completions, LSP updates, and key-hint p
 
 (after! lsp-mode
   (setq lsp-completion-provider :none
-        lsp-idle-delay 0.15))
+        lsp-idle-delay 0.15)
+  (add-to-list 'lsp-disabled-clients 'glslls)
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection '("glsl_analyzer" "--stdio"))
+    :activation-fn (lsp-activate-on "glsl")
+    :server-id 'glsl-analyzer)))
 #+end_src
 
 * Window Navigation

@@ -86,6 +86,7 @@ in
     shellcheck
     shfmt
     glslang
+    glsl_analyzer
 
     (writeShellScriptBin "qmlls-wrapped" ''
       exec ${qt6.qtdeclarative}/bin/qmlls ${qmlImportArgs} "$@"

@@ -146,7 +146,13 @@
 
 (after! lsp-mode
   (setq lsp-completion-provider :none
-        lsp-idle-delay 0.15))
+        lsp-idle-delay 0.15)
+  (add-to-list 'lsp-disabled-clients 'glslls)
+  (lsp-register-client
+   (make-lsp-client
+    :new-connection (lsp-stdio-connection '("glsl_analyzer" "--stdio"))
+    :activation-fn (lsp-activate-on "glsl")
+    :server-id 'glsl-analyzer)))
 
 (map! :n "C-h" #'evil-window-left
       :n "C-j" #'evil-window-down
