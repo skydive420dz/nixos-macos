@@ -14,51 +14,11 @@ let
   configFile = "${homeDirectory}/.config/kanata/kanata.kbd";
 
   # Fresh macOS installs still need manual Privacy & Security approvals:
-  #   - /Applications/Kanata.app: Accessibility, Input Monitoring, Full Disk Access
+  #   - /usr/local/bin/kanata: Input Monitoring
+  #   - /usr/local/bin/kanata: Accessibility, if needed
   #   - Karabiner VirtualHIDDevice: Driver Extension enabled/activated
   # These cannot be declared reliably by nix-darwin because they live in macOS TCC/System Extension state.
-  appRoot = "/Applications/Kanata.app";
-  appBin = "${appRoot}/Contents/MacOS/Kanata";
-  runnerBin = "${appRoot}/Contents/MacOS/kanata-launchd";
-
-  kanataLaunchdRunner = pkgs.stdenv.mkDerivation {
-    pname = "kanata-launchd-runner";
-    version = "1.0";
-    dontUnpack = true;
-
-    buildPhase = ''
-      cat > kanata-launchd.c <<'C'
-      #include <stdio.h>
-      #include <sys/stat.h>
-      #include <unistd.h>
-
-      int main(void) {
-        const char *kanata = "${appBin}";
-        const char *config = "${configFile}";
-        const char *socket = "/Library/Application Support/org.pqrs/tmp/rootonly/vhidd_server";
-
-        for (int i = 0; i < 100; i++) {
-          struct stat st;
-          if (stat(socket, &st) == 0 && S_ISSOCK(st.st_mode)) {
-            break;
-          }
-          usleep(200000);
-        }
-
-        execl(kanata, "kanata", "--cfg", config, (char *)NULL);
-        perror("execl");
-        return 1;
-      }
-      C
-
-      $CC kanata-launchd.c -o kanata-launchd
-    '';
-
-    installPhase = ''
-      mkdir -p $out/bin
-      install -m 0755 kanata-launchd $out/bin/kanata-launchd
-    '';
-  };
+  kanataBin = "/usr/local/bin/kanata";
 in
 {
   environment.systemPackages = [ pkgs.kanata ];
@@ -74,36 +34,11 @@ in
     mkdir -p ${lib.escapeShellArg managerRoot}
     cp -R ${lib.escapeShellArg "${driver}/Applications/.Karabiner-VirtualHIDDevice-Manager.app"} ${lib.escapeShellArg managerRoot}/
 
-    rm -rf ${lib.escapeShellArg appRoot}
-    mkdir -p ${lib.escapeShellArg "${appRoot}/Contents/MacOS"} ${lib.escapeShellArg "${appRoot}/Contents/Resources"}
-    cat > ${lib.escapeShellArg "${appRoot}/Contents/Info.plist"} <<'PLIST'
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-    <dict>
-      <key>CFBundleExecutable</key>
-      <string>Kanata</string>
-      <key>CFBundleIdentifier</key>
-      <string>org.nixos.kanata</string>
-      <key>CFBundleName</key>
-      <string>Kanata</string>
-      <key>CFBundlePackageType</key>
-      <string>APPL</string>
-      <key>CFBundleShortVersionString</key>
-      <string>1.0</string>
-      <key>CFBundleVersion</key>
-      <string>1</string>
-      <key>NSInputMonitoringUsageDescription</key>
-      <string>Kanata needs Input Monitoring to remap keyboard events.</string>
-    </dict>
-    </plist>
-PLIST
-    cp ${lib.escapeShellArg "${pkgs.kanata}/bin/kanata"} ${lib.escapeShellArg appBin}
-    cp ${lib.escapeShellArg "${kanataLaunchdRunner}/bin/kanata-launchd"} ${lib.escapeShellArg runnerBin}
-    chmod 755 ${lib.escapeShellArg appBin}
-    chmod 755 ${lib.escapeShellArg runnerBin}
-    /usr/bin/codesign --force --deep --sign - ${lib.escapeShellArg appRoot} >/dev/null 2>&1 || true
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f ${lib.escapeShellArg appRoot} >/dev/null 2>&1 || true
+    rm -rf ${lib.escapeShellArg "/Applications/Kanata.app"}
+    mkdir -p /usr/local/bin
+    cp ${lib.escapeShellArg "${pkgs.kanata}/bin/kanata"} ${lib.escapeShellArg kanataBin}
+    chmod 755 ${lib.escapeShellArg kanataBin}
+    /usr/bin/codesign --force --sign - ${lib.escapeShellArg kanataBin} >/dev/null 2>&1 || true
   '';
 
   system.activationScripts.postActivation.text = ''
@@ -141,7 +76,11 @@ PLIST
   launchd.daemons.kanata = {
     serviceConfig = {
       Label = "org.nixos.kanata";
-      ProgramArguments = [ runnerBin ];
+      ProgramArguments = [
+        kanataBin
+        "--cfg"
+        configFile
+      ];
       RunAtLoad = true;
       KeepAlive = false;
       ProcessType = "Interactive";
