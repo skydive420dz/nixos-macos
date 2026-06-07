@@ -386,6 +386,7 @@
     "sk-notes"
     "sk-dired"
     "sk-terminal"
+    "sk-ledger"
     "sk-project"
     "sk-git"
     "sk-keybindings")

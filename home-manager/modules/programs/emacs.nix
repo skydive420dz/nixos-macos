@@ -78,6 +78,7 @@ let
 
     # Core editor/project tooling.
     git
+    ledger
     ripgrep
     fd
     editorconfig-core-c

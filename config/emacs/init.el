@@ -34,6 +34,7 @@
 (require 'sk-notes)
 (require 'sk-dired)
 (require 'sk-terminal)
+(require 'sk-ledger)
 (require 'sk-project)
 (require 'sk-git)
 (require 'sk-keybindings)

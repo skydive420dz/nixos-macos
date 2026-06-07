@@ -238,6 +238,27 @@ config/emacs/eshell/aliases
 Keep =aliases= empty until it contains real Eshell alias lines; comment-only
 alias files fail Eshell's alias parser.
 
+* Ledger
+Ledger support is for private plain-text accounting files, not dotfile-owned
+data. Nix provides the =ledger= CLI and Emacs provides =ledger-mode= for
+=.ledger=, =.journal=, and =.dat= files.
+
+Default private location:
+
+#+begin_src text
+~/Documents/finance/
+#+end_src
+
+In Ledger buffers:
+
+#+begin_src text
+SPC m a           add transaction
+SPC m b           balance report
+SPC m r           report menu
+SPC m d           finance directory
+TAB               complete at point
+#+end_src
+
 * Org Notes
 #+begin_src text
 SPC n i           inbox for unsorted capture
