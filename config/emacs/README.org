@@ -546,6 +546,7 @@ org SPC m a    attachment localleader            same built-in Org commands     
 #+begin_src text
 DONE Finish Doom muscle-memory key audit for core file/project/search/help/buffer/mode keys.
 TODO Watch for real-use key edge cases and add them deliberately as they come up.
+TODO Add a macOS LaunchAgent-backed Emacs daemon and make =emacsclient --create-frame= the normal GUI entrypoint.
 TODO Tune completion across minibuffer, Corfu, snippets, LSP, and prose.
 DONE Polish Doom modeline and Sky theme faces until the UI looks intentional.
 TODO Make Org first-class: notes, agenda, capture templates, source blocks, navigation.
