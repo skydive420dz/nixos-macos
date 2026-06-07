@@ -10,6 +10,10 @@
 (defvar sk/tree-sitter-grammar-path-env "SK_EMACS_TREE_SITTER_GRAMMAR_PATH"
   "Environment variable containing Nix-provided Tree-sitter parser directories.")
 
+(defvar sk/tree-sitter-grammar-path-fallback
+  (expand-file-name "tree-sitter-grammars/lib" user-emacs-directory)
+  "Fallback Nix-linked Tree-sitter parser directory for GUI launches.")
+
 (defconst sk/tree-sitter-mode-remaps
   '((python-mode . (python-ts-mode . python))
     (rust-mode . (rust-ts-mode . rust))
@@ -51,10 +55,12 @@
 
 (defun sk/tree-sitter-add-load-paths ()
   "Add Nix-provided Tree-sitter grammar directories to Emacs."
-  (when-let ((path (getenv sk/tree-sitter-grammar-path-env)))
-    (dolist (dir (split-string path path-separator t))
-      (when (file-directory-p dir)
-        (add-to-list 'treesit-extra-load-path dir)))))
+  (dolist (dir (append
+                (when-let ((path (getenv sk/tree-sitter-grammar-path-env)))
+                  (split-string path path-separator t))
+                (list sk/tree-sitter-grammar-path-fallback)))
+    (when (file-directory-p dir)
+      (add-to-list 'treesit-extra-load-path dir))))
 
 (defun sk/tree-sitter-setup ()
   "Enable conservative Tree-sitter mode routing."

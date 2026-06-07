@@ -180,6 +180,7 @@ in
 
   # Doom is frozen reference material; clean Emacs is the active config.
   home.file.".doom.d".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/doom";
+  home.file.".cache/emacs/tree-sitter-grammars".source = emacsTreeSitterGrammarBundle;
   xdg.configFile."doom".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/doom";
   xdg.configFile."emacs".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/emacs";
 }
