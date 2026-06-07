@@ -68,7 +68,7 @@
         eshell-hist-ignoredups t
         eshell-scroll-to-bottom-on-input t
         eshell-destroy-buffer-when-process-dies t
-        eshell-visual-commands '("bash" "fish" "ssh" "top" "zsh")
+        eshell-visual-commands '("bash" "fish" "lazygit" "less" "man" "more" "nvim" "ssh" "top" "vim" "yazi" "zsh")
         eshell-prompt-function #'sk/eshell-prompt
         eshell-prompt-regexp (concat "^" (regexp-quote sk/eshell-prompt-symbol) " ")))
 
