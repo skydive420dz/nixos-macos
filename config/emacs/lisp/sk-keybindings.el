@@ -184,12 +184,12 @@
     (save-some-buffers)
     (let* ((unit (format "sk-emacs-restart-%s" (emacs-pid)))
            (client-command (if (executable-find "uwsm")
-                               "uwsm app -- emacsclient --create-frame --alternate-editor=emacs"
-                             "emacsclient --create-frame --alternate-editor=emacs"))
-           (restart-command (format "sleep 0.2; systemctl --user restart emacs.service; sleep 0.8; %s"
+                               "uwsm app -- emacsclient --create-frame --alternate-editor=false"
+                             "emacsclient --create-frame --alternate-editor=false"))
+           (restart-command (format "sleep 0.2; systemctl --user restart emacs.service; i=0; while [ \"$i\" -lt 80 ]; do emacsclient --alternate-editor=false --eval '(emacs-pid)' >/dev/null 2>&1 && exec %s; i=$((i + 1)); sleep 0.1; done; echo 'emacs daemon did not become ready' >&2; exit 1"
                                     client-command)))
       (unless (executable-find "systemd-run")
-        (user-error "systemd-run is not available"))
+        (user-error "Emacs daemon restart is currently wired for systemd user services only"))
       (start-process "sk-emacs-restart" nil
                      "systemd-run" "--user" "--quiet" "--collect"
                      (concat "--unit=" unit)
@@ -340,6 +340,24 @@
   (interactive)
   (consult-imenu))
 
+(defun sk/code-docs ()
+  "Refresh and display documentation for the thing at point."
+  (interactive)
+  (eldoc-mode 1)
+  (condition-case nil
+      (eldoc-print-current-symbol-info)
+    (error nil))
+  (run-at-time
+   0.15 nil
+   (lambda (buffer)
+     (when (buffer-live-p buffer)
+       (with-current-buffer buffer
+         (condition-case err
+             (eldoc-doc-buffer t)
+           (error
+            (message "%s" (error-message-string err)))))))
+   (current-buffer)))
+
 (defun sk/code-errors ()
   "Show Flymake diagnostics."
   (interactive)
@@ -361,6 +379,7 @@
     "sk-completion"
     "sk-languages"
     "sk-treesit"
+    "sk-qml"
     "sk-lsp"
     "sk-format"
     "sk-org"
@@ -560,7 +579,7 @@
 (define-key sk/code-map (kbd "D") #'xref-find-references)
 (define-key sk/code-map (kbd "f") #'sk/format-buffer-or-region)
 (define-key sk/code-map (kbd "i") #'eglot-find-implementation)
-(define-key sk/code-map (kbd "k") #'eldoc-doc-buffer)
+(define-key sk/code-map (kbd "k") #'sk/code-docs)
 (define-key sk/code-map (kbd "r") #'sk/code-rename)
 (define-key sk/code-map (kbd "s") #'sk/code-symbols)
 (define-key sk/code-map (kbd "t") #'eglot-find-typeDefinition)

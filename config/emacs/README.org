@@ -4,8 +4,8 @@
 * Purpose
 This is the clean personal Emacs configuration experiment.
 
-This is the active clean Emacs config. Doom is frozen as reference material under
-=~/.config/doom=.
+This is the active clean Emacs config. Doom is frozen as reference material
+under =~/.config/doom=.
 
 * Ownership
 #+begin_src text
@@ -236,6 +236,25 @@ config/emacs/eshell/aliases
 Keep =aliases= empty until it contains real Eshell alias lines; comment-only
 alias files fail Eshell's alias parser.
 
+* Org Notes
+#+begin_src text
+SPC n i           inbox for unsorted capture
+SPC n d           today's daily note
+SPC n c           capture note/task/daily/topic/project entry
+SPC n f           find note
+SPC n s           search notes
+SPC n o           notes root in Dired
+SPC n a           agenda
+SPC n T           TODO agenda
+SPC n r           daily review
+SPC n R           refresh agenda files
+#+end_src
+
+Daily notes are the working surface. Inbox is for loose thoughts. The daily
+review checklist processes inbox items, clarifies TODOs, moves project/topic
+notes, marks follow-ups, and chooses tomorrow's first focus. The template only
+applies to newly-created daily files.
+
 * Org Navigation
 #+begin_src text
 TAB / S-TAB       cycle heading / global cycle
@@ -418,14 +437,53 @@ Grammar available, classic mode retained until we deliberately choose an Emacs
 TS mode package or confirm the built-in mode exists:
 
 #+begin_src text
-qml
 glsl
 org
 #+end_src
 
-QML remains classic because this package set does not provide a usable
-=qml-ts-mode=. Do not fake QML highlighting with ad hoc regex rules; revisit
-when a real Tree-sitter major mode is available.
+QML uses =sk-qml-ts-mode=, a small local mode backed by the =qmljs=
+Tree-sitter parser. It keeps =qml-mode= as the fallback when the parser is not
+available and avoids ad hoc regex highlighting.
+
+The local QML mode exists because clean Emacs does not currently provide a
+built-in QML TS major mode that covers our Quickshell files well. It owns only
+editor parsing/highlighting policy. Runtime QML structure still belongs to the
+Quickshell tree, its =qmldir= files, and the global project guidelines.
+
+Current QML coverage:
+
+#+begin_src text
+imports             import modules and import paths
+object types         Canvas, PanelWindow, RowLayout, local components
+properties           QML property declarations and bindings
+attached props       WlrLayershell.layer, Layout.fillWidth
+JS blocks            var declarations, initializer uses, binary expressions,
+                     function calls, and function argument identifiers
+constants            true, false, null
+strings/comments     parser-backed string and comment nodes
+#+end_src
+
+QML LSP support stays intentionally modest. =qmlls-wrapped= supplies Qt and
+Quickshell import paths, completion, Eldoc, Flymake, and formatting support,
+but hover prose and jump precision depend on Qt/Quickshell metadata and
+=qmlls= behavior. Sparse hover text is not, by itself, an editor wiring failure.
+
+QML validation must stay light. Repeated automated completion probes can spawn
+many =qmlls= children and wedge the Emacs daemon. Prefer manual checks from a
+real frame. Safe scripted checks should use temp buffers with mode hooks
+disabled and verify only parser/font-lock behavior.
+
+Reference material:
+
+#+begin_src text
+xhcoding/qml-ts-mode  https://github.com/xhcoding/qml-ts-mode
+#+end_src
+
+Use external QML modes as references, not automatic replacements. The
+=xhcoding/qml-ts-mode= package is useful for indentation, comment setup,
+imenu/defun navigation, operators, brackets, delimiters, escape sequences, and
+QML keyword coverage. Our local mode stays the owner until a borrowed piece is
+tested against real Quickshell files and proves better.
 
 NVF is not edited by this policy. It remains a reference and already owns its
 own Tree-sitter setup through NVF.
@@ -553,9 +611,25 @@ TODO Make Org first-class: notes, agenda, capture templates, source blocks, navi
 DONE Sanity-check LSP per language: Nix, Lua, QML, Rust, C/C++, Python, Haskell, shell, Markdown/Org prose, YAML/JSON, web basics.
 TODO Decide formatting policy and keep it explicit instead of surprise autoformat.
 DONE Decide Emacs tree-sitter grammar ownership before enabling tsx-ts/js-ts modes.
-TODO Choose extra TS major-mode packages for QML and Org if they beat the classic modes.
+TODO Choose an extra TS major-mode package for Org if it beats the classic mode. QML is handled by local sk-qml-ts-mode.
 TODO Keep documenting the clean Emacs layout and user-facing key surface as it changes.
+TODO Reference audit: gopar/.emacs.d. Treat it as source material only, not structure to copy.
+TODO Try DevDocs as a small docs-at-point slice, inspired by gopar's Devdocs section.
+TODO Evaluate Popper for transient help/warnings/terminal/compilation buffer control.
+TODO Adapt Org TODO/agenda/review ideas slowly: NEXT, IN-PROGRESS, WAITING, log drawers, review views.
+TODO Compare completion layering with gopar's Corfu/Cape/dabbrev/yasnippet-capf setup before changing ours.
+TODO Consider smarter keyboard-quit behavior for minibuffer/completion/region escape.
+TODO Consider keycast for learning/debugging key usage.
+TODO Consider envrc/direnv only if project environments become a real Emacs pain point.
 #+end_src
+
+Reference:
+- https://github.com/gopar/.emacs.d
+- DevDocs: README.org section "Devdocs"
+- Popper: README.org section "Popper"
+- Org workflow: README.org sections "Org", "Org Agenda", and "Org Capture"
+- Completion: README.org section "Code Completion"
+- Smart quit: README.org function =gopar/er-keyboard-quit-dwim=
 
 * Rule
 Keep every module small enough to understand.

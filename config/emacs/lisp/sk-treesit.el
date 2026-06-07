@@ -17,6 +17,8 @@
 (defconst sk/tree-sitter-mode-remaps
   '((python-mode . (python-ts-mode . python))
     (rust-mode . (rust-ts-mode . rust))
+    (c-mode . (c-ts-mode . c))
+    (c++-mode . (c++-ts-mode . cpp))
     (lua-mode . (lua-ts-mode . lua))
     (sh-mode . (bash-ts-mode . bash))
     (json-mode . (json-ts-mode . json))

@@ -3,7 +3,21 @@
 ;; Start with Eglot because it is built into Emacs and keeps the clean config
 ;; smaller. Nix owns the external language-server executables.
 
+(require 'cl-lib)
 (require 'seq)
+(require 'eglot)
+
+(cl-defmethod eglot-register-capability
+  (server (method (eql :workspace/didChangeWatchedFiles)) id &rest params)
+  "Accept qmlls' colon-prefixed watched-file registration method."
+  (apply #'eglot-register-capability
+         server 'workspace/didChangeWatchedFiles id params))
+
+(cl-defmethod eglot-unregister-capability
+  (server (method (eql :workspace/didChangeWatchedFiles)) id &rest params)
+  "Accept qmlls' colon-prefixed watched-file unregistration method."
+  (apply #'eglot-unregister-capability
+         server 'workspace/didChangeWatchedFiles id params))
 
 (defconst sk/eglot-managed-modes
   '(c-mode c++-mode c-ts-mode c++-ts-mode
@@ -11,7 +25,7 @@
     python-mode python-ts-mode
     lua-mode lua-ts-mode
     nix-mode nix-ts-mode
-    qml-mode
+    qml-mode sk-qml-ts-mode
     js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-ts-mode
     web-mode html-mode html-ts-mode mhtml-mode css-mode css-ts-mode
     sh-mode bash-ts-mode
@@ -23,13 +37,15 @@
   "Major modes that should start Eglot when their server is available.")
 
 (defconst sk/eglot-server-programs
-  '((((qml-mode :language-id "qml")) . ("qmlls-wrapped"))
+  '((((qml-mode :language-id "qml")
+      (sk-qml-ts-mode :language-id "qml"))
+     . ("qmlls-wrapped"))
     (((lua-mode :language-id "lua")
       (lua-ts-mode :language-id "lua"))
      . ("lua-language-server"))
     (((nix-mode :language-id "nix")
       (nix-ts-mode :language-id "nix"))
-     . ("nil"))
+     . ("nixd"))
     (((json-mode :language-id "json")
       (json-ts-mode :language-id "json")
       (js-json-mode :language-id "json"))
@@ -68,6 +84,20 @@
 (defvar sk/org-agenda-generating-p nil
   "Non-nil while Org is collecting agenda buffers.")
 
+(defvar sk/lua-neovim-runtime-path
+  (expand-file-name "lua/neovim-runtime" user-emacs-directory)
+  "Nix-linked Neovim runtime path used by LuaLS for `vim.*' metadata.")
+
+(defun sk/lua-workspace-library ()
+  "Return LuaLS library directories for Neovim-aware Lua buffers."
+  (seq-filter
+   #'file-directory-p
+   (list
+    (expand-file-name "lua" sk/lua-neovim-runtime-path)
+    (expand-file-name "lua/vim/_meta" sk/lua-neovim-runtime-path)
+    (expand-file-name "lua/vim/lsp/_meta" sk/lua-neovim-runtime-path)
+    (expand-file-name "lua/uv" sk/lua-neovim-runtime-path))))
+
 (defun sk/without-eglot-during-org-agenda (orig-fn &rest args)
   "Call ORIG-FN with prose Eglot autostart paused for agenda collection."
   (let ((sk/org-agenda-generating-p t))
@@ -81,8 +111,16 @@ servers are strict about unknown configuration shapes, so avoid sending the Nix
 server config to prose servers like Harper."
   (let ((language-ids (eglot--language-ids server)))
     (cond
+     ((member "lua" language-ids)
+      (list :Lua
+            (list :runtime (list :version "LuaJIT")
+                  :diagnostics (list :globals ["vim" "hl"])
+                  :workspace (list :checkThirdParty :json-false
+                                   :library (vconcat (sk/lua-workspace-library))))))
      ((member "nix" language-ids)
-      '(:nil (:nix (:flake (:autoArchive t)))))
+      nil)
+     ((member "haskell" language-ids)
+      (list :haskell (make-hash-table :test 'equal)))
      ((seq-intersection '("markdown" "org" "plaintext") language-ids #'string=)
       '(:harper-ls (:userDictPath ""
                     :workspaceDictPath ""
@@ -112,7 +150,28 @@ server config to prose servers like Harper."
   "Return non-nil when the current buffer is a real file buffer for Eglot."
   (and buffer-file-name
        (not sk/org-agenda-generating-p)
-       (not (string-prefix-p " " (buffer-name)))))
+       (not (string-prefix-p " " (buffer-name)))
+       (or (not (memq major-mode '(rust-mode rust-ts-mode)))
+           (locate-dominating-file default-directory "Cargo.toml")
+           (locate-dominating-file default-directory "rust-project.json"))))
+
+(defun sk/eglot-configure ()
+  "Apply Sky Eglot defaults immediately and for new buffers."
+  (setq-default eglot-autoshutdown nil
+                eglot-workspace-configuration
+                #'sk/eglot-workspace-configuration)
+  (setq eglot-autoshutdown nil
+        eglot-workspace-configuration
+        #'sk/eglot-workspace-configuration)
+  (dolist (server sk/eglot-server-programs)
+    (setq eglot-server-programs
+          (seq-remove (lambda (entry)
+                        (equal (car entry) (car server)))
+                      eglot-server-programs)))
+  (setq eglot-server-programs
+        (append sk/eglot-server-programs eglot-server-programs)))
+
+(sk/eglot-configure)
 
 (defun sk/eglot-ensure ()
   "Start Eglot for supported buffers."
@@ -136,7 +195,7 @@ server config to prose servers like Harper."
           python-mode python-ts-mode
           lua-mode lua-ts-mode
           nix-mode nix-ts-mode
-          qml-mode
+          qml-mode sk-qml-ts-mode
           js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-ts-mode
           web-mode html-mode html-ts-mode mhtml-mode css-mode css-ts-mode
           sh-mode bash-ts-mode
@@ -146,16 +205,7 @@ server config to prose servers like Harper."
           json-mode json-ts-mode
           markdown-mode markdown-ts-mode org-mode text-mode) . sk/eglot-ensure)
   :config
-  (setq eglot-autoshutdown nil
-        eglot-workspace-configuration
-        #'sk/eglot-workspace-configuration)
-  (dolist (server sk/eglot-server-programs)
-    (setq eglot-server-programs
-          (seq-remove (lambda (entry)
-                        (equal (car entry) (car server)))
-                      eglot-server-programs)))
-  (setq eglot-server-programs
-        (append sk/eglot-server-programs eglot-server-programs)))
+  (sk/eglot-configure))
 
 (with-eval-after-load 'org-agenda
   (advice-remove 'org-agenda #'sk/without-eglot-during-org-agenda)

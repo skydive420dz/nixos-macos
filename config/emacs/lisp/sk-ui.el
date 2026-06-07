@@ -1,10 +1,10 @@
 ;;; sk-ui.el --- UI settings -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 140)
+(set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 160)
 
 ;; Keep frames opaque by default. Transparency was measured as a real redraw cost.
-(add-to-list 'default-frame-alist '(alpha . 100))
-(add-to-list 'default-frame-alist '(alpha-background . 100))
+(add-to-list 'default-frame-alist '(alpha . 98))
+(add-to-list 'default-frame-alist '(alpha-background . 98))
 (add-to-list 'default-frame-alist '(undecorated . t))
 (add-to-list 'default-frame-alist '(undecorated-round . nil))
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -40,6 +40,10 @@
 
 (add-hook 'prog-mode-hook #'sk/enable-line-numbers)
 
+(defun sk/enable-prose-wrapping ()
+  "Enable visual wrapping for prose buffers."
+  (visual-line-mode 1))
+
 (dolist (hook '(org-mode-hook
                 markdown-mode-hook
                 text-mode-hook
@@ -52,6 +56,12 @@
                 special-mode-hook
                 completion-list-mode-hook))
   (add-hook hook #'sk/disable-line-numbers))
+
+(dolist (hook '(org-mode-hook
+                markdown-mode-hook
+                markdown-ts-mode-hook
+                text-mode-hook))
+  (add-hook hook #'sk/enable-prose-wrapping))
 
 (dolist (buffer (buffer-list))
   (with-current-buffer buffer

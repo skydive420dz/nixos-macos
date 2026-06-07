@@ -5,6 +5,22 @@
 (defvar sk/org-notes-root (expand-file-name "~/Documents/notes/")
   "Root directory for personal Org notes.")
 
+(defconst sk/org-daily-note-template
+  "* Today
+** Focus
+** Tasks
+** Notes
+** Questions
+** Follow-up
+** Review
+- [ ] Process inbox into tasks, projects, topics, or archive.
+- [ ] Clarify open TODOs and decide what still matters.
+- [ ] Move project/topic notes where they belong.
+- [ ] Mark follow-ups and waiting items.
+- [ ] Choose tomorrow's first focus.
+"
+  "Body inserted into newly-created daily notes.")
+
 (defun sk/org-agenda-note-files ()
   "Return every Org note file under `sk/org-notes-root'."
   (when (file-directory-p sk/org-notes-root)
@@ -52,7 +68,7 @@
     (sk/org--ensure-file
      file
      date
-     "* Today\n** Focus\n** Tasks\n** Notes\n** Questions\n** Follow-up\n")))
+     sk/org-daily-note-template)))
 
 (defun sk/org-topic-file ()
   "Prompt for a topic note and return its file path, creating it if needed."

@@ -5,13 +5,15 @@
 (require 'subr-x)
 (require 'eglot)
 
-(defvar sk/formatter-alist
+(defconst sk/formatter-alist
   '((nix-mode . ("nixfmt"))
     (nix-ts-mode . ("nixfmt"))
     (lua-mode . ("stylua" "-"))
     (lua-ts-mode . ("stylua" "-"))
     (qml-mode . ("qmlformat" "--indent-width" "2" "--column-width" "-1" :file))
+    (sk-qml-ts-mode . ("qmlformat" "--indent-width" "2" "--column-width" "-1" :file))
     (rust-mode . ("rustfmt"))
+    (rust-ts-mode . ("rustfmt"))
     (c-mode . ("clang-format"))
     (c++-mode . ("clang-format"))
     (c-ts-mode . ("clang-format"))
@@ -23,7 +25,18 @@
     (json-mode . ("prettier" "--parser" "json"))
     (json-ts-mode . ("prettier" "--parser" "json"))
     (yaml-mode . ("prettier" "--parser" "yaml"))
-    (yaml-ts-mode . ("prettier" "--parser" "yaml")))
+    (yaml-ts-mode . ("prettier" "--parser" "yaml"))
+    (js-mode . ("prettier" "--parser" "babel"))
+    (js-ts-mode . ("prettier" "--parser" "babel"))
+    (typescript-mode . ("prettier" "--parser" "typescript"))
+    (typescript-ts-mode . ("prettier" "--parser" "typescript"))
+    (tsx-ts-mode . ("prettier" "--parser" "typescript"))
+    (web-mode . ("prettier" "--parser" "html"))
+    (html-mode . ("prettier" "--parser" "html"))
+    (html-ts-mode . ("prettier" "--parser" "html"))
+    (mhtml-mode . ("prettier" "--parser" "html"))
+    (css-mode . ("prettier" "--parser" "css"))
+    (css-ts-mode . ("prettier" "--parser" "css")))
   "Formatter commands keyed by major mode.
 
 Most commands read from stdin and write formatted text to stdout.
@@ -36,6 +49,7 @@ Commands containing `:file' receive a temporary file path instead.")
         (concat "." extension))
       (pcase major-mode
         ('qml-mode ".qml")
+        ('sk-qml-ts-mode ".qml")
         ('python-mode ".py")
         ('python-ts-mode ".py")
         ('rust-mode ".rs")
