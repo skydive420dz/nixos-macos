@@ -1,5 +1,13 @@
 ;;; sk-dired.el --- File management -*- lexical-binding: t; -*-
 
+(defun sk/ls-supports-group-directories-first-p ()
+  "Return non-nil when the active `ls' supports GNU directory grouping."
+  (and insert-directory-program
+       (executable-find insert-directory-program)
+       (with-temp-buffer
+         (eq 0 (call-process insert-directory-program nil t nil
+                             "--group-directories-first" "-d" ".")))))
+
 (defun sk/dired-next-line ()
   "Move to the next Dired line and refresh preview immediately."
   (interactive)
@@ -18,7 +26,9 @@
   :ensure nil
   :config
   (setq dired-kill-when-opening-new-dired-buffer t
-        dired-listing-switches "-alh --group-directories-first"
+        dired-listing-switches (if (sk/ls-supports-group-directories-first-p)
+                                   "-alh --group-directories-first"
+                                 "-alh")
         delete-by-moving-to-trash t)
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (add-hook 'dired-mode-hook #'hl-line-mode)
