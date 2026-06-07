@@ -1,10 +1,24 @@
 ;;; sk-ui.el --- UI settings -*- lexical-binding: t; -*-
 
-(set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 120)
+(set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 140)
 
 ;; Keep frames opaque by default. Transparency was measured as a real redraw cost.
 (add-to-list 'default-frame-alist '(alpha . 100))
 (add-to-list 'default-frame-alist '(alpha-background . 100))
+(add-to-list 'default-frame-alist '(undecorated . t))
+(add-to-list 'default-frame-alist '(undecorated-round . nil))
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+
+(defun sk/apply-graphic-frame-policy (&optional frame)
+  "Apply Sky graphic frame parameters to FRAME."
+  (let ((target-frame (or frame (selected-frame))))
+    (when (display-graphic-p target-frame)
+      (set-frame-parameter target-frame 'undecorated t)
+      (set-frame-parameter target-frame 'undecorated-round nil)
+      (set-frame-parameter target-frame 'ns-transparent-titlebar t))))
+
+(add-hook 'after-make-frame-functions #'sk/apply-graphic-frame-policy)
+(sk/apply-graphic-frame-policy)
 
 (setq display-line-numbers-type 'relative)
 

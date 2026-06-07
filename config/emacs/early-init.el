@@ -37,6 +37,9 @@
 
 (setq default-frame-alist
       '((vertical-scroll-bars . nil)
-        (internal-border-width . 0)))
+        (internal-border-width . 0)
+        (undecorated . t)
+        (undecorated-round . nil)
+        (ns-transparent-titlebar . t)))
 
 ;;; early-init.el ends here
