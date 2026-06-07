@@ -47,6 +47,7 @@
 
       mode.main.binding = {
         ctrl-alt-enter = "exec-and-forget open -na kitty";
+        ctrl-alt-t = "exec-and-forget open -na Emacs";
         ctrl-alt-v = "exec-and-forget open -na 'Visual Studio Code'";
         ctrl-alt-b = "exec-and-forget open -na Safari";
 
