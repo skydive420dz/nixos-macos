@@ -13,6 +13,18 @@
 
 (fset #'yes-or-no-p #'y-or-n-p)
 
+(defun sk/prepend-exec-path (directory)
+  "Prepend DIRECTORY to `exec-path' and process PATH when it exists."
+  (when (and directory (file-directory-p directory))
+    (add-to-list 'exec-path directory)
+    (setenv "PATH" (concat directory path-separator (or (getenv "PATH") "")))))
+
+(dolist (directory (list invocation-directory
+                         (expand-file-name "~/.nix-profile/bin")
+                         (format "/etc/profiles/per-user/%s/bin" user-login-name)
+                         "/nix/var/nix/profiles/default/bin"))
+  (sk/prepend-exec-path directory))
+
 (setq backup-directory-alist `(("." . ,(expand-file-name "backups/" user-emacs-directory)))
       auto-save-file-name-transforms `((".*" ,(expand-file-name "auto-save/" user-emacs-directory) t))
       create-lockfiles nil)
