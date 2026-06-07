@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Rectangle
+# key: rect
+# --
+Rectangle {
+  id: ${1:root}
+  color: ${2:"transparent"}
+
+  $0
+}

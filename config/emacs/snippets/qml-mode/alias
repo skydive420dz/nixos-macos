@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: property alias
+# key: alias
+# --
+property alias ${1:name}: ${2:target}.${3:property}
+$0

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Repeater
+# key: rep
+# --
+Repeater {
+  model: ${1:model}
+
+  delegate: ${2:Item} {
+    $0
+  }
+}

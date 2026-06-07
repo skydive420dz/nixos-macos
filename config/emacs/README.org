@@ -1,0 +1,564 @@
+#+title: Sky Emacs
+#+startup: overview
+
+* Purpose
+This is the clean personal Emacs configuration experiment.
+
+This is the active clean Emacs config. Doom is frozen as reference material under
+=~/.config/doom=.
+
+* Ownership
+#+begin_src text
+Nix owns external tools, language servers, formatters, fonts, services, wrappers, and links.
+Emacs owns Emacs packages, editor behavior, keymaps, completion, LSP client behavior, Org, Dired, terminal, and theme faces.
+Projects own project-local metadata such as .dir-locals.el and language-server hints.
+#+end_src
+
+* Commands
+After Home Manager links this directory to =~/.config/emacs=:
+
+#+begin_src sh
+emacs-sync
+emacs
+#+end_src
+
+Doom is frozen as reference material under =~/.config/doom=.
+
+* Runtime State
+Runtime/package state belongs outside the repo:
+
+#+begin_src text
+~/.cache/emacs/
+#+end_src
+
+The source tree should stay limited to hand-written config files.
+
+* Layout
+#+begin_src text
+early-init.el
+init.el
+lisp/
+  sk-core.el
+  sk-package.el
+  sk-ui.el
+  sk-theme.el
+  sk-evil.el
+  sk-completion.el
+  sk-lsp.el
+  sk-format.el
+  sk-org.el
+  sk-notes.el
+  sk-dired.el
+  sk-terminal.el
+  sk-project.el
+  sk-git.el
+  sk-dashboard.el
+  sk-languages.el
+  sk-keybindings.el
+#+end_src
+
+* Survival Keys
+The clean config uses Evil plus a small =SPC= leader map.
+
+#+begin_src text
+SPC SPC / SPC :   M-x
+SPC .             find file
+SPC ,             switch buffer
+SPC `             last buffer
+SPC /             search project
+SPC *             search symbol at point in project
+SPC u             universal argument
+SPC x             scratch buffer
+SPC X             org capture
+
+SPC f f           find file
+SPC f d           Dired
+SPC f r           recent file
+SPC f s           save
+SPC f S           write as
+SPC f C           copy current file
+SPC f D           delete current file to trash
+SPC f F           find file from current file directory
+SPC f l           locate file
+SPC f R           rename/move current file
+SPC f u           sudo find file
+SPC f U           reopen current file with sudo
+SPC f y           copy current file path
+SPC f Y           copy project-relative file path
+
+SPC b b           switch buffer
+SPC b i           buffer list
+SPC b k           kill buffer
+SPC b N           new empty buffer
+SPC b [ / ]       previous / next buffer
+SPC b d           kill buffer
+SPC b K           kill all buffers
+SPC b l           last buffer
+SPC b m / M       set / delete bookmark
+SPC b n / p       next / previous buffer
+SPC b O           kill other buffers
+SPC b r / R       revert / rename buffer
+SPC b s / S       save buffer / save some buffers
+SPC b x / X       scratch buffer
+SPC b y           copy buffer contents
+SPC b z / Z       bury buffer / kill buried buffers
+TAB / S-TAB       next / previous buffer outside Org/snippets
+
+SPC w v / s       split right / below
+SPC w w / W       next / previous window
+SPC w x           close window
+SPC w o           only window
+SPC w =           balance windows
+SPC w u / U       undo / redo window layout
+SPC w h/j/k/l     move between windows
+SPC w H/J/K/L     resize current window
+
+SPC c a           code action
+SPC c c / C       compile / recompile
+SPC c d / D       definition / references
+SPC c f           format buffer or region explicitly
+SPC c i           implementation
+SPC c k           documentation buffer
+SPC c r           rename symbol
+SPC c t           type definition
+SPC c w           delete trailing whitespace
+SPC c x           diagnostics
+
+SPC t n           new tab
+SPC t x           close tab
+SPC t o           only tab
+SPC t [ / ]       previous / next tab
+
+SPC p f           project file
+SPC p F           file in other project
+SPC p p           switch project
+SPC p s           project search
+SPC p b           project buffer
+SPC p g           Magit status
+SPC p t           project terminal
+SPC p n           project notes
+SPC p .           search symbol at point in project
+SPC p ! / &       shell / async shell command in project
+SPC p c / C       compile / recompile project
+SPC p e           edit project .dir-locals.el
+SPC p k           kill project buffers
+SPC p o           find sibling file
+SPC p r           recent project file
+SPC p S           save project buffers
+
+SPC s .           search symbol at point in project
+SPC s b           search current buffer
+SPC s B           search all open buffers
+SPC s d           search current directory
+SPC s D           search other directory
+SPC s f           locate file
+SPC s s           search current buffer
+SPC s S           search symbol at point in buffer
+SPC s p           ripgrep project/directory
+SPC s i           outline/imenu
+SPC s I           outline/imenu across buffers
+SPC s m           jump bookmark
+
+SPC g g           Magit status
+
+SPC n i           inbox
+SPC n d           daily note
+SPC n t           topic note
+SPC n p           project note
+SPC n c           capture
+SPC n a           agenda
+SPC n r           daily review
+SPC n R           refresh agenda files
+
+SPC o -           Dired jump to current file
+SPC o b           open current file in browser
+SPC o d           Dired
+SPC o t           vterm
+SPC o e           eshell
+SPC o E           named eshell
+SPC o f           new frame
+SPC o F           select frame
+
+SPC T l           line numbers
+SPC T w           visual wrap
+
+SPC h k/f/v/m/b   describe key/function/variable/mode/bindings
+SPC h r r         reload config
+SPC h r s         sync Emacs packages
+SPC h r t         reload Sky theme
+SPC q q           save buffers and quit
+SPC q a           save buffers and quit Emacs
+SPC q w           save current file buffer and quit
+SPC q f           force quit Emacs
+SPC q r           restart daemon and reopen frame where supported
+#+end_src
+
+* Formatting
+Formatting is explicit only. There is no format-on-save hook.
+
+#+begin_src text
+SPC c f           format active region or current buffer
+#+end_src
+
+Known formatter commands:
+
+#+begin_src text
+Nix               nixfmt
+Lua               stylua
+QML               qmlformat --indent-width 2 --column-width -1
+Rust              rustfmt
+C / C++           clang-format
+Python            black
+Shell             shfmt
+JSON / YAML       prettier
+#+end_src
+
+Unknown modes fall back to Eglot formatting when available, then indentation.
+
+* Terminals
+#+begin_src text
+SPC o t           vterm
+SPC o e           eshell
+SPC o E           named eshell
+#+end_src
+
+vterm uses zsh and keeps terminal buffers in insert state with =C-h/j/k/l=
+window movement.
+
+Eshell uses the Sky =λ= prompt, syntax highlighting, no line numbers, and no
+Corfu popup. Its live files are:
+
+#+begin_src text
+config/emacs/eshell/profile
+config/emacs/eshell/aliases
+#+end_src
+
+Keep =aliases= empty until it contains real Eshell alias lines; comment-only
+alias files fail Eshell's alias parser.
+
+* Org Navigation
+#+begin_src text
+TAB / S-TAB       cycle heading / global cycle
+[[ / ]]           previous / next visible heading
+[h / ]h           previous / next visible heading
+[s / ]s           previous / next same-level heading
+gh               up to parent heading
+gj / gk           next / previous visible heading
+gl               org-goto
+za / zA           cycle heading / global cycle
+> / <             demote / promote subtree
+M-j / M-k         move subtree down / up
+#+end_src
+
+* Org Localleader
+In Org and Agenda buffers, =SPC m= mirrors Doom's localleader shape for
+mode-local actions. This keeps global =SPC n= for opening notes and uses
+=SPC m= for operating on the current Org item, table, subtree, or agenda row.
+
+#+begin_src text
+SPC m t           TODO state for current heading
+SPC m T           TODO list
+SPC m '           edit source block
+SPC m e           export
+SPC m x           toggle checkbox
+SPC m q           set tags
+SPC m A           archive subtree
+
+SPC m d d/s/t/T   deadline / schedule / timestamp / inactive timestamp
+SPC m c i/o/g/r   clock in / out / goto / resolve clocks
+SPC m p d/p/u     priority down / set / up
+SPC m r r         refile
+SPC m s h/j/k/l   promote / move down / move up / demote subtree
+SPC m s n/N       narrow to subtree / widen
+SPC m b ...       table actions
+SPC m B ...       source-block actions
+SPC m a ...       attachment actions
+
+Source blocks:
+SPC m B '         edit source block
+SPC m B i         insert source block, or wrap active region
+SPC m B e         execute current source block, using loaded Babel languages
+SPC m B r         remove source-block result
+SPC m B t         tangle current Org file
+SPC m B n/p       next / previous source block
+SPC m B g         goto named source block
+
+Agenda:
+SPC m t           TODO state for agenda item
+SPC m q           set tags
+SPC m r           refile
+SPC m d d/s       deadline / schedule
+SPC m c i/o/g/r   clock in / out / goto / clock report
+SPC m p d/p/u     priority down / set / up
+C-SPC             show and scroll agenda item
+#+end_src
+
+* Org Babel Policy
+Org source blocks are split between executable languages and note/template
+languages.
+
+Executable languages:
+
+#+begin_src text
+emacs-lisp
+shell / bash
+python
+lua
+#+end_src
+
+Template-only languages:
+
+#+begin_src text
+nix
+qml
+rust
+c / c++
+haskell
+json
+yaml
+glsl
+#+end_src
+
+Execution still asks for confirmation through =org-confirm-babel-evaluate=.
+Add another executable language only when there is a real workflow for running
+that language from Org, not merely because we want a source-block template.
+
+* Mode Polish
+#+begin_src text
+Dired:
+SPC m h           toggle omitted files
+SPC m p           toggle preview
+
+Magit:
+q / Q             bury Magit buffer / quit Magit session
+[ / ]             previous / next sibling section
+gr / gR           refresh / refresh all
+gz                refresh status buffer
+gd                jump diffstat or diff in diff buffers
+TAB               toggle section
+#+end_src
+
+* Modeline And Theme
+Modeline ownership is split deliberately:
+
+#+begin_src text
+sk-ui.el          Doom modeline layout and noise knobs
+sk-theme.el       Sky face colors for mode-line and doom-modeline faces
+#+end_src
+
+The modeline should stay compact and useful:
+
+#+begin_src text
+active window     clear Sky surface background, accent bar, readable file/project state
+inactive window   dim background, muted text, no heavy border
+status colors     success/warning/danger tokens for LSP, diagnostics, and modified state
+noise policy      hide encoding/env/workspace/chat counters unless we decide they matter
+#+end_src
+
+* Completion
+Completion is layered deliberately:
+
+#+begin_src text
+minibuffer        Vertico + Orderless + Marginalia + Consult + Embark
+buffer popup      Corfu
+code sources      snippet triggers first, then mode/LSP CAPFs and Cape fallbacks
+prose sources     Org/text CAPFs first, then Cape file and dabbrev
+snippets          Yasnippet is active globally; repo snippets live in config/emacs/snippets
+snippet source    snippet triggers appear in Corfu for code buffers
+snippet fields    TAB / S-TAB move next / previous while a snippet is active
+history           savehist persists Corfu selection history
+docs              Corfu popupinfo shows candidate documentation when the source provides it
+#+end_src
+
+Completion keys:
+
+#+begin_src text
+C-j / C-k         next / previous completion candidate
+C-l               accept completion candidate
+C-h               quit completion popup
+M-/               start completion at point; Corfu displays the popup
+M-d               toggle Corfu documentation popup while completion is open
+#+end_src
+
+Documentation availability depends on the completion source. LSP candidates may
+provide docs. File names, keywords, dabbrev, snippets, and many local symbols
+usually do not. Snippet triggers are offered in Corfu for code buffers and
+expand when accepted. Current tracked snippets cover QML/Quickshell.
+
+* Tree-Sitter Policy
+Nix owns Tree-sitter parser delivery for clean Emacs. Emacs reads the parser
+bundle from =SK_EMACS_TREE_SITTER_GRAMMAR_PATH= and only remaps modes when both
+the grammar and built-in TS major mode are available.
+
+=font-lock-maximum-decoration= is set to =t= so modes use their richest
+available highlighting level. This only affects faces that the major mode
+actually marks; it does not invent semantic highlighting for underpowered modes.
+
+Routed to built-in TS modes:
+
+#+begin_src text
+python        python-ts-mode
+rust          rust-ts-mode
+c / c++       c-ts-mode / c++-ts-mode
+shell         bash-ts-mode
+lua           lua-ts-mode
+nix           nix-ts-mode
+haskell       haskell-ts-mode
+markdown      markdown-ts-mode
+json          json-ts-mode
+yaml          yaml-ts-mode
+css           css-ts-mode
+javascript    js-ts-mode
+typescript    typescript-ts-mode / tsx-ts-mode
+toml          toml-ts-mode
+html          html-ts-mode
+#+end_src
+
+Grammar available, classic mode retained until we deliberately choose an Emacs
+TS mode package or confirm the built-in mode exists:
+
+#+begin_src text
+qml
+glsl
+org
+#+end_src
+
+QML remains classic because this package set does not provide a usable
+=qml-ts-mode=. Do not fake QML highlighting with ad hoc regex rules; revisit
+when a real Tree-sitter major mode is available.
+
+NVF is not edited by this policy. It remains a reference and already owns its
+own Tree-sitter setup through NVF.
+
+* LSP Policy
+Eglot is the clean Emacs LSP client. Servers are started for real file buffers
+only, and =eglot-autoshutdown= stays disabled so project language servers are
+not repeatedly started and killed during normal buffer churn.
+
+* Binding Migration
+This table tracks Doom key behavior as it moves into the clean config.
+
+#+begin_src text
+Old key        Doom command/function             Clean equivalent                  Status
+SPC .          find-file                         find-file                         done
+SPC ,          switch-to-buffer                  consult-buffer                    done
+SPC `          evil-switch-to-windows-last-buffer sk/switch-to-last-buffer         done
+SPC /          search project                    sk/search-project                 done
+SPC *          search symbol in project          sk/search-project-symbol-at-point done
+SPC u          universal-argument                universal-argument                done
+SPC x          doom/toggle-scratch-buffer        scratch-buffer                    done
+SPC X          org-capture                       org-capture                       done
+s              evil-substitute                   evil-substitute                   done
+S              evil-change-whole-line            evil-change-whole-line            done
+[[             org-previous-visible-heading      org-previous-visible-heading      done
+]]             org-next-visible-heading          org-next-visible-heading          done
+TAB in org     org-cycle                         org-cycle                         done
+S-TAB in org   org-shifttab                      org-shifttab                      done
+C-h/j/k/l      evil-window-left/down/up/right    same Evil window commands         done
+vterm C-h/j/k/l evil-window-left/down/up/right   same Evil window commands         done
+SPC h r r      reload config                     sk/reload-config                  done
+SPC h r t      sk/load-sky-theme                 sk/load-theme                     done, renamed
+SPC b i        ibuffer                           ibuffer                           done
+SPC b k        kill buffer                       sk/kill-current-buffer            done
+SPC b [/]/n/p  previous/next buffer              previous-buffer/next-buffer       done
+SPC b d        kill buffer                       sk/kill-current-buffer            done
+SPC b K/O      kill all/other buffers            sk helpers                        done
+SPC b l        last buffer                       sk/switch-to-last-buffer          done
+SPC b m/M      bookmark set/delete               bookmark-set/bookmark-delete      done
+SPC b r/R      revert/rename buffer              revert-buffer/rename-buffer       done
+SPC b s/S      save/save some buffers            save-buffer/save-some-buffers     done
+SPC b x/X      scratch buffer                    scratch-buffer                    done
+SPC b y        yank buffer contents              sk/yank-buffer-contents           done
+SPC b z/Z      bury/kill buried buffers          bury-buffer/sk helper             done
+SPC f d        dired                             dired                             done
+SPC f C        copy current file                 sk/copy-current-file              done
+SPC f D        delete current file               sk/delete-current-file to trash   done
+SPC f F        find file from here               sk/find-file-here                 done
+SPC f l        locate file                       locate                            done
+SPC f R        rename/move current file          sk/rename-current-file            done
+SPC f u/U      sudo find/current file            sk sudo helpers                   done
+SPC f y/Y      yank absolute/project path        sk path helpers                   done
+SPC c a/r      code action/rename                Eglot actions                     done
+SPC c c/C      compile/recompile                 compile/recompile                 done
+SPC c d/D      definition/references             xref                              done
+SPC c f        format buffer/region              explicit formatter map           done
+SPC c i/t      implementation/type definition    Eglot                             done
+SPC c k        documentation                     eldoc-doc-buffer                  done
+SPC c w/x      whitespace/diagnostics            delete-trailing/Flymake           done
+SPC w w/W      next/previous window              sk/next-window/sk/previous-window done
+SPC w u/U      winner undo/redo                  winner-undo/winner-redo           done
+SPC t n/x/o    tab actions                       tab-new/tab-close/tab-close-other done
+SPC o e/E      eshell/named eshell               eshell/eshell-new                 done
+SPC o t        vterm                             vterm                             done
+SPC s i        consult-imenu                     consult-imenu                     done
+SPC s I        consult-imenu-multi               consult-imenu-multi               done
+SPC p f        projectile-find-file              project-find-file                 done, project.el
+SPC p F        find file in other project        sk/project-find-file-in-other-project done
+SPC p s        projectile-ripgrep                consult-ripgrep                   done, project.el
+SPC p p        projectile-switch-project         project-switch-project            done, project.el
+SPC p g        magit-status                      magit-status                      done
+SPC p t        sk/project-vterm                  sk/project-vterm                  done, clean helper
+SPC p n        sk/project-notes                  sk/project-notes                  done, clean helper
+SPC p ./!/&    project symbol/shell commands     sk helpers                        done
+SPC p c/C      project compile/recompile         sk helpers                        done
+SPC p e        edit .dir-locals                  sk/project-edit-dir-locals        done
+SPC p k/S/r/o  kill/save/recent/sibling          sk/built-in helpers               done
+SPC s ./S      search symbol at point            sk search helpers                 done
+SPC s b/B      search buffer/open buffers        consult-line/consult-line-multi   done
+SPC s d/D      search current/other directory    sk search helpers                 done
+SPC s f/m      locate/bookmark                   locate/bookmark-jump              done
+SPC o -        dired-jump                        dired-jump                        done
+SPC o b        browse-url-of-file                browse-url-of-file                done
+SPC o f/F      make/select frame                 make-frame/select-frame-by-name   done
+SPC n i        sk/org-open-inbox                 sk/org-open-inbox                 done
+SPC n d        sk/org-open-daily-note            sk/org-open-daily-note            done
+SPC n t        sk/org-open-topic-note            sk/org-open-topic-note            done
+SPC n p        sk/org-open-project-note          sk/org-open-project-note          done
+SPC n c        org-capture                       org-capture                       done
+SPC n a        sk/org-agenda                     sk/org-agenda                     done, refreshes note discovery
+SPC n r        sk/org-daily-review               sk/org-daily-review               done
+SPC n R        sk/org-refresh-agenda-files       sk/org-refresh-agenda-files       done
+C-c n a        sk/org-agenda                     sk/org-agenda                     done, refreshes note discovery
+C-c n r        sk/org-daily-review               sk/org-daily-review               done
+C-c n R        sk/org-refresh-agenda-files       sk/org-refresh-agenda-files       done
+dired h        dired-up-directory                dired-up-directory                done
+dired l        dired-find-file                   dired-find-file                   done
+dired RET      dired-find-file                   dired-find-file                   done
+dired SPC m h  dired-omit-mode                   dired-omit-mode                   done
+dired SPC m p  dired-preview-mode                dired-preview-mode                done
+magit q/Q      quit Magit buffer/session         magit bury/quit session           done
+magit [/]/TAB  section navigation/toggle         Magit built-ins                   done
+magit gr/gR/gz refresh                           Magit built-ins                   done
+magit gd       jump diffstat/diff                magit-jump-to-diffstat-or-diff   done
+org SPC m t    org-todo                         org-todo                         done
+agenda SPC m t org-agenda-todo                  org-agenda-todo                  done
+org SPC m d    date/deadline localleader         same built-in Org commands       done
+org SPC m c    clock localleader                 same built-in Org commands       done
+org SPC m p    priority localleader              same built-in Org commands       done
+org SPC m r    refile localleader                org-refile                       done
+org SPC m s    subtree localleader               same built-in Org commands       done
+org SPC m b    table localleader                 same built-in Org commands       done
+org SPC m B    source-block localleader          sk/org-babel-map                 done
+org SPC m a    attachment localleader            same built-in Org commands       done
+#+end_src
+
+* TODO Next Emacs Passes
+#+begin_src text
+DONE Finish Doom muscle-memory key audit for core file/project/search/help/buffer/mode keys.
+TODO Watch for real-use key edge cases and add them deliberately as they come up.
+TODO Tune completion across minibuffer, Corfu, snippets, LSP, and prose.
+DONE Polish Doom modeline and Sky theme faces until the UI looks intentional.
+TODO Make Org first-class: notes, agenda, capture templates, source blocks, navigation.
+DONE Sanity-check LSP per language: Nix, Lua, QML, Rust, C/C++, Python, Haskell, shell, Markdown/Org prose, YAML/JSON, web basics.
+TODO Decide formatting policy and keep it explicit instead of surprise autoformat.
+DONE Decide Emacs tree-sitter grammar ownership before enabling tsx-ts/js-ts modes.
+TODO Choose extra TS major-mode packages for QML and Org if they beat the classic modes.
+TODO Keep documenting the clean Emacs layout and user-facing key surface as it changes.
+#+end_src
+
+* Rule
+Keep every module small enough to understand.
+
+No hidden Doom layer.
+No giant inline Nix strings.
+No global behavior that is not documented and tested per buffer class.

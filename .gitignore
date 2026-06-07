@@ -14,3 +14,6 @@ experiments/
 # Doom runtime/cache state belongs outside git.
 config/doom/.local/
 config/doom/org/.attach/
+
+# Clean Emacs package/runtime state belongs in ~/.cache/emacs.
+config/emacs/elpa/

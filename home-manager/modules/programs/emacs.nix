@@ -8,8 +8,7 @@
 
 let
   repoPath = "${homeDirectory}/Projects/nixos-macos";
-  doomDir = "${config.home.homeDirectory}/.config/doom";
-  emacsDir = "${config.home.homeDirectory}/.config/emacs";
+  emacsPackage = pkgs.emacs30;
   aspellWithEnglish = pkgs.aspellWithDicts (
     dicts: with dicts; [
       en
@@ -19,12 +18,64 @@ let
     "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
   ];
   qmlImportArgs = lib.concatMapStringsSep " " (path: "-I ${lib.escapeShellArg path}") qmlImportPaths;
-in
-{
-  home.packages = with pkgs; [
-    emacs30
+  qmllsWrapped = pkgs.writeShellScriptBin "qmlls-wrapped" ''
+    exec ${pkgs.qt6.qtdeclarative}/bin/qmlls ${qmlImportArgs} "$@"
+  '';
+  glibtoolWrapped = pkgs.writeShellScriptBin "glibtool" ''
+    exec ${pkgs.libtool}/bin/libtool "$@"
+  '';
+  emacsTreeSitterGrammars = with pkgs.tree-sitter-grammars; {
+    bash = tree-sitter-bash;
+    c = tree-sitter-c;
+    cpp = tree-sitter-cpp;
+    css = tree-sitter-css;
+    glsl = tree-sitter-glsl;
+    haskell = tree-sitter-haskell;
+    html = tree-sitter-html;
+    javascript = tree-sitter-javascript;
+    json = tree-sitter-json;
+    lua = tree-sitter-lua;
+    markdown = tree-sitter-markdown;
+    markdown-inline = tree-sitter-markdown-inline;
+    nix = tree-sitter-nix;
+    org = tree-sitter-org;
+    python = tree-sitter-python;
+    qmljs = tree-sitter-qmljs;
+    rust = tree-sitter-rust;
+    toml = tree-sitter-toml;
+    tsx = tree-sitter-tsx;
+    typescript = tree-sitter-typescript;
+    yaml = tree-sitter-yaml;
+  };
+  emacsTreeSitterGrammarBundle = pkgs.runCommand "emacs-tree-sitter-grammars" { } (
+    ''
+      mkdir -p "$out/lib"
+    ''
+    + lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (language: grammar: ''
+        ln -s ${grammar}/parser "$out/lib/libtree-sitter-${language}${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
+      '') emacsTreeSitterGrammars
+    )
+  );
+  emacsTreeSitterGrammarPath = "${emacsTreeSitterGrammarBundle}/lib";
+  emacsRuntimeTools = with pkgs; [
+    emacsPackage
 
-    # Core Doom/project tooling.
+    # Shell/build tools used by Emacs packages with native modules.
+    bashInteractive
+    coreutils
+    findutils
+    perl
+    cmake
+    gnumake
+    gcc
+    libtool
+    autoconf
+    automake
+    pkg-config
+    glibtoolWrapped
+
+    # Core editor/project tooling.
     git
     ripgrep
     fd
@@ -42,16 +93,7 @@ in
     aspellWithEnglish
     harper
 
-    # vterm native module build support.
-    cmake
-    gnumake
-    gcc
-    libtool
-    autoconf
-    automake
-    pkg-config
-
-    # Language server support for the Emacs experiment.
+    # Language server support.
     nodejs
     typescript
     typescript-language-server
@@ -87,49 +129,57 @@ in
     shfmt
     glslang
     glsl_analyzer
+    qmllsWrapped
 
-    (writeShellScriptBin "qmlls-wrapped" ''
-      exec ${qt6.qtdeclarative}/bin/qmlls ${qmlImportArgs} "$@"
-    '')
-
-    # Nix editing support for the Emacs experiment.
+    # Nix editing support.
     nil
     nixfmt
+  ];
+  emacsRuntimePath = lib.makeBinPath emacsRuntimeTools;
+  emacsSync = pkgs.writeShellScriptBin "emacs-sync" ''
+    set -euo pipefail
 
-    # Optional Doom mail support, enabled to match the MSI profile.
-    mu
-    isync
+    export PATH="${emacsRuntimePath}:''${PATH-}"
+    export SK_EMACS_TREE_SITTER_GRAMMAR_PATH="${emacsTreeSitterGrammarPath}"
 
-    (writeShellScriptBin "glibtool" ''
-      exec ${libtool}/bin/libtool "$@"
-    '')
+    ${emacsPackage}/bin/emacs --batch \
+      -l "$HOME/.config/emacs/early-init.el" \
+      -l "$HOME/.config/emacs/init.el" \
+      --eval "(message \"emacs packages loaded\")"
 
-    (writeShellScriptBin "doom-bootstrap" ''
-      set -euo pipefail
+    vterm_dir="$(
+      find "$HOME/.cache/emacs/elpa" \
+        -maxdepth 1 \
+        -type d \
+        -name 'vterm-*' \
+      | sort \
+      | tail -n 1
+    )"
 
-      export DOOMDIR="${doomDir}"
-      emacs_dir="${emacsDir}"
+    if [ -z "$vterm_dir" ]; then
+      echo "emacs-sync: vterm package directory not found" >&2
+      exit 1
+    fi
 
-      if [ ! -d "$emacs_dir/.git" ]; then
-        git clone --depth 1 https://github.com/doomemacs/doomemacs "$emacs_dir"
-      else
-        git -C "$emacs_dir" pull --ff-only
-      fi
+    cmake -S "$vterm_dir" -B "$vterm_dir/build" -DUSE_SYSTEM_LIBVTERM=Off
+    cmake --build "$vterm_dir/build"
+    test -f "$vterm_dir/vterm-module.so"
 
-      "$emacs_dir/bin/doom" install
-      "$emacs_dir/bin/doom" sync
-    '')
+    ${emacsPackage}/bin/emacs --batch \
+      -l "$HOME/.config/emacs/early-init.el" \
+      -l "$HOME/.config/emacs/init.el" \
+      --eval "(progn (require 'vterm) (message \"emacs-sync complete\"))"
+  '';
+in
+{
+  home.sessionVariables.SK_EMACS_TREE_SITTER_GRAMMAR_PATH = emacsTreeSitterGrammarPath;
+
+  home.packages = emacsRuntimeTools ++ [
+    emacsSync
   ];
 
+  # Doom is frozen reference material; clean Emacs is the active config.
   home.file.".doom.d".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/doom";
-
   xdg.configFile."doom".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/doom";
-
-  home.sessionPath = [
-    "${emacsDir}/bin"
-  ];
-
-  home.sessionVariables = {
-    DOOMDIR = doomDir;
-  };
+  xdg.configFile."emacs".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/emacs";
 }
