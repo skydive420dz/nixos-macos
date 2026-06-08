@@ -397,6 +397,19 @@ status colors     success/warning/danger tokens for LSP, diagnostics, and modifi
 noise policy      hide encoding/env/workspace/chat counters unless we decide they matter
 #+end_src
 
+=solaire-mode= is enabled to give secondary buffers such as help, Magit, Dired,
+and other utility views a Sky panel background. It should create visual depth
+without changing normal editing buffers.
+
+Utility buffers use a consistent side-window policy:
+
+#+begin_src text
+help / eldoc / apropos       right panel
+dired / ibuffer / magit      right panel
+eshell / vterm               right panel
+warnings / compile output    bottom panel
+#+end_src
+
 * Completion
 Completion is layered deliberately:
 

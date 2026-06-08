@@ -21,6 +21,8 @@
 (require 'sk-core)
 (require 'sk-theme)
 (require 'sk-ui)
+(require 'sk-windows)
+(require 'sk-solaire)
 (require 'sk-dashboard)
 (require 'sk-evil)
 (require 'sk-completion)

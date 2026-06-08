@@ -17,12 +17,30 @@
   (define-key vterm-mode-map (kbd "C-k") #'windmove-up)
   (define-key vterm-mode-map (kbd "C-l") #'windmove-right))
 
-(defun eshell-new (name)
+(defun sk/open-vterm ()
+  "Open Vterm in the right utility panel."
+  (interactive)
+  (let ((buffer (save-window-excursion
+                  (vterm)
+                  (current-buffer))))
+    (select-window (sk/display-buffer-right buffer 0.48))))
+
+(defun sk/open-eshell ()
+  "Open Eshell in the right utility panel."
+  (interactive)
+  (let ((buffer (save-window-excursion
+                  (eshell)
+                  (current-buffer))))
+    (select-window (sk/display-buffer-right buffer 0.48))))
+
+(defun sk/open-eshell-new (name)
   "Create a new eshell buffer named NAME."
   (interactive "sName: ")
   (let ((name (concat "$" name)))
-    (eshell)
+    (sk/open-eshell)
     (rename-buffer name)))
+
+(defalias 'eshell-new #'sk/open-eshell-new)
 
 (defface sk/eshell-prompt-directory
   '((t (:inherit eshell-prompt)))

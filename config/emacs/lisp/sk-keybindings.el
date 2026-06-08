@@ -375,6 +375,8 @@
     "sk-core"
     "sk-theme"
     "sk-ui"
+    "sk-windows"
+    "sk-solaire"
     "sk-evil"
     "sk-completion"
     "sk-languages"
@@ -517,7 +519,7 @@
 (define-key sk/leader-map (kbd "q") sk/quit-map)
 
 (define-key sk/file-map (kbd "C") #'sk/copy-current-file)
-(define-key sk/file-map (kbd "d") #'dired)
+(define-key sk/file-map (kbd "d") #'sk/open-dired)
 (define-key sk/file-map (kbd "D") #'sk/delete-current-file)
 (define-key sk/file-map (kbd "f") #'find-file)
 (define-key sk/file-map (kbd "F") #'sk/find-file-here)
@@ -535,7 +537,7 @@
 (define-key sk/buffer-map (kbd "]") #'next-buffer)
 (define-key sk/buffer-map (kbd "b") #'consult-buffer)
 (define-key sk/buffer-map (kbd "d") #'sk/kill-current-buffer)
-(define-key sk/buffer-map (kbd "i") #'ibuffer)
+(define-key sk/buffer-map (kbd "i") #'sk/open-ibuffer)
 (define-key sk/buffer-map (kbd "k") #'sk/kill-current-buffer)
 (define-key sk/buffer-map (kbd "K") #'sk/kill-all-buffers)
 (define-key sk/buffer-map (kbd "l") #'sk/switch-to-last-buffer)
@@ -635,13 +637,13 @@
 (define-key sk/notes-map (kbd "r") #'sk/org-daily-review)
 (define-key sk/notes-map (kbd "R") #'sk/org-refresh-agenda-files)
 
-(define-key sk/open-map (kbd "d") #'dired)
+(define-key sk/open-map (kbd "d") #'sk/open-dired)
 (define-key sk/open-map (kbd "b") #'browse-url-of-file)
-(define-key sk/open-map (kbd "e") #'eshell)
-(define-key sk/open-map (kbd "E") #'eshell-new)
+(define-key sk/open-map (kbd "e") #'sk/open-eshell)
+(define-key sk/open-map (kbd "E") #'sk/open-eshell-new)
 (define-key sk/open-map (kbd "f") #'make-frame)
 (define-key sk/open-map (kbd "F") #'select-frame-by-name)
-(define-key sk/open-map (kbd "t") #'vterm)
+(define-key sk/open-map (kbd "t") #'sk/open-vterm)
 (define-key sk/open-map (kbd "-") #'dired-jump)
 
 (define-key sk/toggle-map (kbd "l") #'display-line-numbers-mode)

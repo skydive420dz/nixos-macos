@@ -22,6 +22,22 @@
   (when (bound-and-true-p dired-preview-mode)
     (dired-preview-trigger :no-delay)))
 
+(defun sk/main-edit-window ()
+  "Return the main non-side editing window."
+  (or (seq-find (lambda (window)
+                  (not (window-parameter window 'window-side)))
+                (window-list nil 'no-minibuf))
+      (selected-window)))
+
+(defun sk/dired-find-file ()
+  "Open directories in Dired and files in the main editing window."
+  (interactive)
+  (let ((file (dired-get-file-for-visit)))
+    (if (file-directory-p file)
+        (dired-find-file)
+      (select-window (sk/main-edit-window))
+      (find-file file))))
+
 (use-package dired
   :ensure nil
   :config
@@ -38,8 +54,8 @@
                 (evil-local-set-key 'normal (kbd "h") #'dired-up-directory)
                 (evil-local-set-key 'normal (kbd "j") #'sk/dired-next-line)
                 (evil-local-set-key 'normal (kbd "k") #'sk/dired-previous-line)
-                (evil-local-set-key 'normal (kbd "l") #'dired-find-file)
-                (evil-local-set-key 'normal (kbd "RET") #'dired-find-file)
+                (evil-local-set-key 'normal (kbd "l") #'sk/dired-find-file)
+                (evil-local-set-key 'normal (kbd "RET") #'sk/dired-find-file)
                 (evil-local-set-key 'normal (kbd "SPC m h") #'dired-omit-mode)
                 (evil-local-set-key 'normal (kbd "SPC m p") #'dired-preview-mode)))))
 
@@ -70,6 +86,7 @@
           dired-del-marker
           dired-goto-file
           dired-find-file
+          sk/dired-find-file
           evil-next-line
           evil-previous-line
           evil-next-visual-line

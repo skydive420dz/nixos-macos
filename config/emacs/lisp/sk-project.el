@@ -12,7 +12,7 @@
   "Open vterm from the project root when possible."
   (interactive)
   (let ((default-directory (or (sk/project-root) default-directory)))
-    (vterm)))
+    (sk/open-vterm)))
 
 (defun sk/project-notes ()
   "Open a note for the current project."

@@ -13,7 +13,7 @@
   :commands magit-status
   :bind (("C-c g" . magit-status))
   :config
-  (setq magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+  (setq magit-display-buffer-function #'sk/display-magit-buffer)
   (evil-collection-init 'magit)
   (evil-define-key '(normal motion) magit-mode-map
     (kbd "TAB") #'magit-section-toggle
