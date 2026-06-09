@@ -33,12 +33,22 @@
 (make-directory (expand-file-name "auto-save/" user-emacs-directory) t)
 
 (setq-default indent-tabs-mode nil
-              tab-width 2
+              tab-width 4
               fill-column 100)
 
-(setq standard-indent 2)
+(setq standard-indent 4)
+
+(defun sk/set-indent-width (width)
+  "Set common buffer-local indentation variables to WIDTH."
+  (setq-local indent-tabs-mode nil)
+  (setq-local tab-width width)
+  (setq-local standard-indent width)
+  (setq-local c-basic-offset width)
+  (setq-local js-indent-level width))
+
 (electric-pair-mode 1)
 (electric-indent-mode 1)
+(global-hl-line-mode 1)
 (save-place-mode 1)
 (recentf-mode 1)
 (global-auto-revert-mode 1)

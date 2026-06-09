@@ -121,7 +121,8 @@ SPC c i           implementation
 SPC c k           documentation buffer
 SPC c r           rename symbol
 SPC c t           type definition
-SPC c w           delete trailing whitespace
+SPC c w           spell word
+SPC c W           delete trailing whitespace
 SPC c x           diagnostics
 
 SPC t n           new tab
@@ -401,6 +402,13 @@ noise policy      hide encoding/env/workspace/chat counters unless we decide the
 and other utility views a Sky panel background. It should create visual depth
 without changing normal editing buffers.
 
+=spacious-padding-mode= adds a small amount of breathing room around frames,
+dividers, fringes, and mode/header lines. The values are intentionally modest so
+the editor keeps its working density.
+
+The tab line is enabled as a polished buffer strip. It uses Nerd Icons, a compact
+buffer name, and Sky faces that mirror the modeline palette.
+
 Utility buffers use a consistent side-window policy:
 
 #+begin_src text
@@ -439,6 +447,22 @@ Documentation availability depends on the completion source. LSP candidates may
 provide docs. File names, keywords, dabbrev, snippets, and many local symbols
 usually do not. Snippet triggers are offered in Corfu for code buffers and
 expand when accepted. Current tracked snippets cover QML/Quickshell.
+
+* Editing Defaults
+Indentation policy is intentionally boring:
+
+#+begin_src text
+default           spaces, width 4
+Nix               spaces, width 2
+Lua               spaces, width 2
+QML / JS / TS     spaces, width 2
+JSON / YAML       spaces, width 2
+Python / C / Rust / Haskell / GLSL
+                  spaces, width 4
+#+end_src
+
+These settings do not remap =TAB= or =S-TAB=. Modes, snippets, Org, and
+completion keep their own key behavior.
 
 * Tree-Sitter Policy
 Nix owns Tree-sitter parser delivery for clean Emacs. Emacs reads the parser
@@ -578,7 +602,8 @@ SPC c d/D      definition/references             xref                           
 SPC c f        format buffer/region              explicit formatter map           done
 SPC c i/t      implementation/type definition    Eglot                             done
 SPC c k        documentation                     eldoc-doc-buffer                  done
-SPC c w/x      whitespace/diagnostics            delete-trailing/Flymake           done
+SPC c w/W      spell/whitespace                  ispell/delete-trailing           done
+SPC c x        diagnostics                       Flymake                          done
 SPC w w/W      next/previous window              sk/next-window/sk/previous-window done
 SPC w u/U      winner undo/redo                  winner-undo/winner-redo           done
 SPC t n/x/o    tab actions                       tab-new/tab-close/tab-close-other done

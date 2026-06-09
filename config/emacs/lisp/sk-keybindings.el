@@ -377,6 +377,8 @@
     "sk-ui"
     "sk-windows"
     "sk-solaire"
+    "sk-spacious"
+    "sk-tabline"
     "sk-evil"
     "sk-completion"
     "sk-languages"
@@ -586,7 +588,8 @@
 (define-key sk/code-map (kbd "r") #'sk/code-rename)
 (define-key sk/code-map (kbd "s") #'sk/code-symbols)
 (define-key sk/code-map (kbd "t") #'eglot-find-typeDefinition)
-(define-key sk/code-map (kbd "w") #'delete-trailing-whitespace)
+(define-key sk/code-map (kbd "w") #'ispell-word)
+(define-key sk/code-map (kbd "W") #'delete-trailing-whitespace)
 (define-key sk/code-map (kbd "x") #'sk/code-errors)
 
 (define-key sk/project-map (kbd ".") #'sk/search-project-symbol-at-point)
@@ -714,6 +717,8 @@
     "SPC c f" "format explicitly"
     "SPC c r" "rename symbol"
     "SPC c s" "symbols"
+    "SPC c w" "spell word"
+    "SPC c W" "delete trailing whitespace"
     "SPC c x" "diagnostics"
     "SPC p" "projects"
     "SPC p !" "project shell command"

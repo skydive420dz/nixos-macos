@@ -101,6 +101,7 @@
   (unless (sk/qml-ts-available-p)
     (user-error "qmljs Tree-sitter parser is not available"))
   (treesit-parser-create 'qmljs)
+  (sk/set-indent-width 2)
   (setq-local treesit-font-lock-settings sk-qml-ts-font-lock-settings)
   (setq-local treesit-font-lock-feature-list
               '((comment string)

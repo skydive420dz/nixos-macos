@@ -23,6 +23,8 @@
 (require 'sk-ui)
 (require 'sk-windows)
 (require 'sk-solaire)
+(require 'sk-spacious)
+(require 'sk-tabline)
 (require 'sk-dashboard)
 (require 'sk-evil)
 (require 'sk-completion)

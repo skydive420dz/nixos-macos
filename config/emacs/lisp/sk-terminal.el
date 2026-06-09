@@ -12,6 +12,7 @@
         vterm-max-scrollback 10000)
   (sk/load-theme)
   (add-hook 'vterm-mode-hook #'evil-insert-state)
+  (add-hook 'vterm-mode-hook (lambda () (hl-line-mode -1)))
   (define-key vterm-mode-map (kbd "C-h") #'windmove-left)
   (define-key vterm-mode-map (kbd "C-j") #'windmove-down)
   (define-key vterm-mode-map (kbd "C-k") #'windmove-up)
@@ -92,6 +93,9 @@
 
 (with-eval-after-load 'corfu
   (add-hook 'eshell-mode-hook (lambda () (corfu-mode -1))))
+
+(dolist (hook '(eshell-mode-hook shell-mode-hook term-mode-hook))
+  (add-hook hook (lambda () (hl-line-mode -1))))
 
 (provide 'sk-terminal)
 
