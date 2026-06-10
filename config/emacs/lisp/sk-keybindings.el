@@ -363,6 +363,18 @@
   (interactive)
   (call-interactively #'flymake-show-buffer-diagnostics))
 
+(defun sk/xref-next-and-preview ()
+  "Move to the next Xref result and preview its source location."
+  (interactive)
+  (xref-next-line)
+  (xref-show-location-at-point))
+
+(defun sk/xref-previous-and-preview ()
+  "Move to the previous Xref result and preview its source location."
+  (interactive)
+  (xref-prev-line)
+  (xref-show-location-at-point))
+
 (defun sk/save-buffer-and-quit ()
   "Save the current file buffer, then quit this Emacs client/session."
   (interactive)
@@ -391,6 +403,7 @@
     "sk-dired"
     "sk-terminal"
     "sk-ledger"
+    "sk-devdocs"
     "sk-project"
     "sk-git"
     "sk-keybindings")
@@ -640,7 +653,8 @@
 (define-key sk/notes-map (kbd "r") #'sk/org-daily-review)
 (define-key sk/notes-map (kbd "R") #'sk/org-refresh-agenda-files)
 
-(define-key sk/open-map (kbd "d") #'sk/open-dired)
+(define-key sk/open-map (kbd "d") #'sk/devdocs-open)
+(define-key sk/open-map (kbd "D") #'sk/open-dired)
 (define-key sk/open-map (kbd "b") #'browse-url-of-file)
 (define-key sk/open-map (kbd "e") #'sk/open-eshell)
 (define-key sk/open-map (kbd "E") #'sk/open-eshell-new)
@@ -753,6 +767,8 @@
     "SPC o" "open"
     "SPC o -" "dired jump"
     "SPC o b" "browser"
+    "SPC o d" "devdocs helper"
+    "SPC o D" "dired"
     "SPC o e" "eshell"
     "SPC o E" "named eshell"
     "SPC o f" "new frame"
@@ -816,6 +832,15 @@
       (kbd "k") #'previous-line
       (kbd "l") #'help-go-forward
       (kbd "RET") #'push-button)))
+
+(with-eval-after-load 'xref
+  (with-eval-after-load 'evil
+    (evil-define-key '(normal motion) xref--xref-buffer-mode-map
+      (kbd "j") #'sk/xref-next-and-preview
+      (kbd "k") #'sk/xref-previous-and-preview
+      (kbd "l") #'xref-goto-xref
+      (kbd "RET") #'xref-goto-xref
+      (kbd "q") #'quit-window)))
 
 (provide 'sk-keybindings)
 

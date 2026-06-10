@@ -173,7 +173,8 @@ SPC n R           refresh agenda files
 
 SPC o -           Dired jump to current file
 SPC o b           open current file in browser
-SPC o d           Dired
+SPC o d           DevDocs helper
+SPC o D           Dired
 SPC o t           vterm
 SPC o e           eshell
 SPC o E           named eshell
@@ -628,6 +629,8 @@ SPC s d/D      search current/other directory    sk search helpers              
 SPC s f/m      locate/bookmark                   locate/bookmark-jump              done
 SPC o -        dired-jump                        dired-jump                        done
 SPC o b        browse-url-of-file                browse-url-of-file                done
+SPC o d        DevDocs helper                    sk-devdocs/devdocs.el            done, panel only
+SPC o D        Dired                             sk/open-dired                    done
 SPC o f/F      make/select frame                 make-frame/select-frame-by-name   done
 SPC n i        sk/org-open-inbox                 sk/org-open-inbox                 done
 SPC n d        sk/org-open-daily-note            sk/org-open-daily-note            done
@@ -675,7 +678,7 @@ DONE Decide Emacs tree-sitter grammar ownership before enabling tsx-ts/js-ts mod
 TODO Choose an extra TS major-mode package for Org if it beats the classic mode. QML is handled by local sk-qml-ts-mode.
 TODO Keep documenting the clean Emacs layout and user-facing key surface as it changes.
 TODO Reference audit: gopar/.emacs.d. Treat it as source material only, not structure to copy.
-TODO Revisit external documentation lookup later. DevDocs is removed from active config because docset installs were unreliable, especially for large Qt docsets.
+TODO Revisit optional symbol-at-point DevDocs lookup later. DevDocs is active as a Magit/Dired-style helper panel only; it does not own LSP, completion, or code documentation at point.
 TODO Evaluate Popper for transient help/warnings/terminal/compilation buffer control.
 TODO Adapt Org TODO/agenda/review ideas slowly: NEXT, IN-PROGRESS, WAITING, log drawers, review views.
 TODO Compare completion layering with gopar's Corfu/Cape/dabbrev/yasnippet-capf setup before changing ours.
