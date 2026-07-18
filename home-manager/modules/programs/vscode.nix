@@ -4,6 +4,9 @@ let
   marketplace =
     inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system}.vscode-marketplace-release;
 
+  marketplacePreRelease =
+    inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system}.vscode-marketplace;
+
   marketplaceExtensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
     {
       publisher = "ms-python";
@@ -48,29 +51,37 @@ in
         "nix.serverPath" = "nil";
       };
 
-      extensions = (with pkgs.vscode-extensions; [
-        eamodio.gitlens
-        jnoortheen.nix-ide
-        ms-python.debugpy
-        ms-python.python
-        ms-python.vscode-pylance
-        ms-vscode.cmake-tools
-        ms-vscode.cpptools
-        ms-vscode.cpptools-extension-pack
-        vscode-icons-team.vscode-icons
-        vscodevim.vim
-        marketplace.bbenoist.qml
-        marketplace.davidanson.vscode-markdownlint
-        marketplace.editorconfig.editorconfig
-        marketplace.fireblast.hyprlang-vscode
-        marketplace.github.copilot-chat
-        marketplace.mads-hartmann.bash-ide-vscode
-        marketplace.malmaud.tmux
-        marketplace.rszyma.vscode-kanata
-        marketplace.sumneko.lua
-        marketplace.theqtcompany.qt-core
-        marketplace.theqtcompany.qt-qml
-      ]) ++ marketplaceExtensions;
+      extensions =
+        (with pkgs.vscode-extensions; [
+          eamodio.gitlens
+          jnoortheen.nix-ide
+          ms-python.debugpy
+          ms-python.python
+          ms-python.vscode-pylance
+          ms-vscode.cmake-tools
+          ms-vscode.cpptools
+          ms-vscode.cpptools-extension-pack
+          vscode-icons-team.vscode-icons
+          vscodevim.vim
+          marketplace.bbenoist.qml
+          marketplace.davidanson.vscode-markdownlint
+          marketplace.editorconfig.editorconfig
+          marketplace.evzen-wybitul.magic-racket
+          marketplace.fireblast.hyprlang-vscode
+          marketplace.github.copilot-chat
+          marketplace.mads-hartmann.bash-ide-vscode
+          marketplace.malmaud.tmux
+          marketplace.ms-vscode.powershell
+          marketplacePreRelease.ms-vscode.vscode-chat-customizations-evaluations
+          marketplace.qingpeng.common-lisp
+          marketplace.rszyma.vscode-kanata
+          marketplace.sjhuangx.vscode-scheme
+          marketplace.sumneko.lua
+          marketplace.theqtcompany.qt-core
+          marketplace.theqtcompany.qt-qml
+          marketplace.tootone.org-mode
+        ])
+        ++ marketplaceExtensions;
     };
   };
 }

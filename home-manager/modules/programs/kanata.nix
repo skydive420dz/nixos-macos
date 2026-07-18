@@ -13,6 +13,9 @@
 
     (defcfg
       process-unmapped-keys no
+      macos-dev-names-include (
+        "Apple Internal Keyboard / Trackpad"
+      )
     )
 
     (defsrc

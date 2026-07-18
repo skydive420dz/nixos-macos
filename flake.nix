@@ -16,6 +16,11 @@
 
     nvf.url = "github:notashelf/nvf";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+
+    vial-gui = {
+      url = "github:vial-kb/vial-gui/v0.7.5";
+      flake = false;
+    };
   };
 
   outputs =
