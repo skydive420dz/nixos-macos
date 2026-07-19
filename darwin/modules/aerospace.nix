@@ -48,8 +48,9 @@
       mode.main.binding = {
         ctrl-alt-enter = "exec-and-forget open -na kitty";
         ctrl-alt-t = "exec-and-forget open -na Emacs";
-        ctrl-alt-v = "exec-and-forget open -na 'Visual Studio Code'";
+        ctrl-alt-c = "exec-and-forget open -na 'Visual Studio Code'";
         ctrl-alt-b = "exec-and-forget open -na Safari";
+        ctrl-alt-e = "exec-and-forget open -a Finder";
 
         ctrl-alt-h = "focus left";
         ctrl-alt-j = "focus down";
@@ -64,10 +65,16 @@
         ctrl-alt-minus = "resize smart -50";
         ctrl-alt-equal = "resize smart +50";
 
+        ctrl-alt-q = "close";
+        ctrl-alt-v = "layout floating tiling";
         ctrl-alt-f = "fullscreen";
-        ctrl-alt-space = "layout floating tiling";
         ctrl-alt-slash = "layout tiles horizontal vertical";
         ctrl-alt-comma = "layout accordion horizontal vertical";
+
+        ctrl-alt-space = "exec-and-forget /usr/bin/open 'spotlight://apps'";
+        ctrl-alt-x = "exec-and-forget /usr/bin/open 'spotlight://apps'; /bin/sleep 0.25; /usr/bin/osascript -e 'tell application \"System Events\" to keystroke \"4\" using command down'";
+        ctrl-alt-s = "exec-and-forget /usr/sbin/screencapture -i -c";
+        ctrl-alt-r = "reload-config";
 
         ctrl-alt-1 = "workspace 1";
         ctrl-alt-2 = "workspace 2";
@@ -78,6 +85,7 @@
         ctrl-alt-7 = "workspace 7";
         ctrl-alt-8 = "workspace 8";
         ctrl-alt-9 = "workspace 9";
+        ctrl-alt-0 = "workspace 10";
 
         ctrl-alt-shift-1 = [
           "move-node-to-workspace 1"
@@ -114,6 +122,10 @@
         ctrl-alt-shift-9 = [
           "move-node-to-workspace 9"
           "workspace 9"
+        ];
+        ctrl-alt-shift-0 = [
+          "move-node-to-workspace 10"
+          "workspace 10"
         ];
 
         ctrl-alt-semicolon = "mode service";
