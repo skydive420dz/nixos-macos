@@ -49,6 +49,7 @@ in
         "workbench.iconTheme" = "vscode-icons";
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nil";
+        "remote.SSH.defaultExtensions" = [ "openai.chatgpt" ];
       };
 
       extensions =
@@ -61,6 +62,7 @@ in
           ms-vscode.cmake-tools
           ms-vscode.cpptools
           ms-vscode.cpptools-extension-pack
+          ms-vscode-remote.remote-ssh
           vscode-icons-team.vscode-icons
           vscodevim.vim
           marketplace.bbenoist.qml

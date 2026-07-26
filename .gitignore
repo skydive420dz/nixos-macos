@@ -17,3 +17,4 @@ config/doom/org/.attach/
 
 # Clean Emacs package/runtime state belongs in ~/.cache/emacs.
 config/emacs/elpa/
+config/emacs/recentf
