@@ -27,13 +27,6 @@ let
       version = "2.0.0";
       sha256 = "05r7hfphhlns2i7zdplzrad2224vdkgzb0dbxg40nwiyq193jq31";
     }
-    {
-      publisher = "openai";
-      name = "chatgpt";
-      version = "26.506.31421";
-      arch = "darwin-arm64";
-      sha256 = "1dcd8kqp7fh8xs92rk9wyb5lx5rq0g414l3s3jp77hxxr1xns4g8";
-    }
   ];
 in
 {
@@ -49,7 +42,6 @@ in
         "workbench.iconTheme" = "vscode-icons";
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nil";
-        "remote.SSH.defaultExtensions" = [ "openai.chatgpt" ];
       };
 
       extensions =
@@ -70,7 +62,6 @@ in
           marketplace.editorconfig.editorconfig
           marketplace.evzen-wybitul.magic-racket
           marketplace.fireblast.hyprlang-vscode
-          marketplace.github.copilot-chat
           marketplace.mads-hartmann.bash-ide-vscode
           marketplace.malmaud.tmux
           marketplace.ms-vscode.powershell
