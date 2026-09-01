@@ -254,10 +254,7 @@ in
           rust = {
             enable = true;
             extensions.crates-nvim.enable = true;
-            lsp = {
-              enable = true;
-              package = pkgs.rust-analyzer;
-            };
+            lsp.enable = true;
           };
           bash = {
             enable = true;

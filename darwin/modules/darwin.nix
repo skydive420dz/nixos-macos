@@ -21,6 +21,19 @@
         kvazaar = prev.kvazaar.overrideAttrs (_old: {
           doCheck = false;
         });
+
+        libgphoto2 = prev.libgphoto2.overrideAttrs (old: {
+          buildInputs = old.buildInputs ++ [ prev.gettext ];
+        });
+
+        mailutils = prev.mailutils.overrideAttrs (old: {
+          postPatch = old.postPatch + ''
+            substituteInPlace libmu_sieve/extensions/Makefile.am \
+              --replace-fail 'LIBS = ../libmu_sieve.la' 'LIBS = ../libmu_sieve.la $(MU_LIB_MAILUTILS)'
+            substituteInPlace examples/Makefile.am \
+              --replace-fail 'numaddr_la_LIBADD = $(MU_LIB_SIEVE)' 'numaddr_la_LIBADD = $(MU_LIB_SIEVE) $(MU_LIB_MAILUTILS)'
+          '';
+        });
       })
     ];
   };
