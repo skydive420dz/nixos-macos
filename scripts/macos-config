@@ -1,0 +1,64 @@
+#!/bin/sh
+set -eu
+
+usage() {
+    printf '%s\n' \
+        "usage: $0 [--target NAME] switch|build|check|update" \
+        "       $0 doctor"
+    exit 64
+}
+
+repo=$(CDPATH='' cd "$(dirname "$0")/.." && pwd -P)
+target=${MACOS_CONFIG_TARGET:-Rafaels-MacBook-Air}
+
+require_command() {
+    command -v "$1" >/dev/null 2>&1 || {
+        printf 'macos-config: missing command: %s\n' "$1" >&2
+        exit 127
+    }
+}
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --target)
+            [ "$#" -ge 2 ] || usage
+            target=$2
+            shift 2
+            ;;
+        --help|-h)
+            usage
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+[ "$#" -eq 1 ] || usage
+command=$1
+
+case "$command" in
+    doctor)
+        "$repo/scripts/macos-doctor"
+        ;;
+    switch)
+        require_command darwin-rebuild
+        require_command nix
+        exec darwin-rebuild switch --flake "$repo#$target"
+        ;;
+    build)
+        require_command nix
+        exec nix build "$repo#darwinConfigurations.$target.system"
+        ;;
+    check)
+        require_command nix
+        exec nix flake check "$repo"
+        ;;
+    update)
+        require_command nix
+        exec nix flake update --flake "$repo"
+        ;;
+    *)
+        usage
+        ;;
+esac

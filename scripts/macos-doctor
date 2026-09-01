@@ -1,0 +1,41 @@
+#!/bin/sh
+set -eu
+
+repo=$(CDPATH='' cd "$(dirname "$0")/.." && pwd -P)
+failures=0
+
+check_command() {
+    if command -v "$1" >/dev/null 2>&1; then
+        printf 'PASS: %s\n' "$1"
+    else
+        printf 'FAIL: missing command: %s\n' "$1"
+        failures=$((failures + 1))
+    fi
+}
+
+check_file() {
+    if [ -r "$1" ]; then
+        printf 'PASS: %s\n' "$2"
+    else
+        printf 'FAIL: %s (%s)\n' "$2" "$1"
+        failures=$((failures + 1))
+    fi
+}
+
+check_command nix
+check_command darwin-rebuild
+check_file "$repo/flake.nix" 'flake is readable'
+check_file "$repo/flake.lock" 'flake lock is readable'
+
+if [ "$(uname -s)" = Darwin ]; then
+    printf 'PASS: running on macOS\n'
+else
+    printf 'WARN: this configuration targets macOS\n'
+fi
+
+if [ "$failures" -ne 0 ]; then
+    printf 'macos-doctor: %s check(s) failed\n' "$failures" >&2
+    exit 1
+fi
+
+printf '%s\n' 'macos-doctor: PASS'
