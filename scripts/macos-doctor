@@ -29,6 +29,14 @@ check_file "$repo/flake.lock" 'flake lock is readable'
 
 if [ "$(uname -s)" = Darwin ]; then
     printf 'PASS: running on macOS\n'
+    case "$(uname -m)" in
+        arm64|aarch64)
+            printf 'PASS: Apple Silicon architecture detected (%s)\n' "$(uname -m)"
+            ;;
+        *)
+            printf 'WARN: this configuration is intended for Apple Silicon; detected %s\n' "$(uname -m)" >&2
+            ;;
+    esac
 else
     printf 'WARN: this configuration targets macOS\n'
 fi

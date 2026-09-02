@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+arch=$(uname -m)
+case "$arch" in
+    arm64|aarch64)
+        printf '%s\n' "Apple Silicon detected: $arch"
+        exit 0
+        ;;
+    *)
+        printf '%s\n' "This configuration requires Apple Silicon; detected: $arch" >&2
+        exit 1
+        ;;
+esac

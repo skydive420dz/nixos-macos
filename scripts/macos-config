@@ -3,7 +3,7 @@ set -eu
 
 usage() {
     printf '%s\n' \
-        "usage: $0 [--target NAME] switch|build|check|update" \
+        "usage: $0 [--target NAME] switch|build|check|update|doctor|arch|apple-silicon" \
         "       $0 doctor"
     exit 64
 }
@@ -40,6 +40,12 @@ command=$1
 case "$command" in
     doctor)
         "$repo/scripts/macos-doctor"
+        ;;
+    arch)
+        uname -m
+        ;;
+    apple-silicon|silicon)
+        exec "$repo/scripts/macos-silicon"
         ;;
     switch)
         require_command darwin-rebuild
