@@ -79,7 +79,7 @@ let
   qmlImportPaths = [
     "${pkgs.qt6.qtdeclarative}/lib/qt-6/qml"
   ]
-  ++ lib.optionals pkgs.stdenv.isLinux [
+  ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
     "${pkgs.quickshell}/lib/qt-6/qml"
   ];
   qmlImportArgs = lib.concatMapStringsSep " " (path: "-I ${lib.escapeShellArg path}") qmlImportPaths;
@@ -143,10 +143,10 @@ in
             qt6.qtdeclarative
             qt6.qttools
           ]
-          ++ lib.optionals stdenv.isDarwin [
+          ++ lib.optionals stdenv.hostPlatform.isDarwin [
             pngpaste
           ]
-          ++ lib.optionals stdenv.isLinux [
+          ++ lib.optionals stdenv.hostPlatform.isLinux [
             quickshell
           ];
 
@@ -336,6 +336,10 @@ in
 
         statusline.lualine = {
           enable = true;
+          integrations.breadcrumbs = {
+            navbuddy.enable = true;
+            nvim-navic.enable = true;
+          };
           activeSection.a = [
             ''
               {
@@ -564,10 +568,6 @@ in
           colorizer.enable = true;
           modes-nvim.enable = false;
           illuminate.enable = true;
-          breadcrumbs = {
-            enable = true;
-            navbuddy.enable = true;
-          };
 
           smartcolumn = {
             enable = true;
