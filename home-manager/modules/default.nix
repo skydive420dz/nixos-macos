@@ -10,7 +10,7 @@
     ./programs/fzf.nix
     ./programs/git.nix
     ./programs/kanata.nix
-    ./programs/kitty.nix
+    ./programs/ghostty.nix
     ./programs/starship.nix
     ./programs/vscode.nix
     ./programs/yazi.nix

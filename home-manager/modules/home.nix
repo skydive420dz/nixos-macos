@@ -13,7 +13,6 @@
 
     packages = with pkgs; [
       bitwarden-cli
-      kitty-themes
       ripgrep
       fd
       curl

@@ -15,7 +15,7 @@
         "/System/Applications/Messages.app"
         "/Applications/Safari.app"
         "/System/Applications/Mail.app"
-        "/Users/skydive420dz/Applications/Home Manager Apps/kitty.app"
+        "/Users/skydive420dz/Applications/Home Manager Apps/Ghostty.app"
         "/System/Applications/Music.app"
         "/System/Applications/iPhone Mirroring.app"
         "/System/Applications/Maps.app"
