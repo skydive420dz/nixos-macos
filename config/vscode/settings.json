@@ -1,0 +1,13 @@
+{
+  "chat.mcp.gallery.enabled": true,
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nil",
+  "update.mode": "none",
+  "workbench.colorTheme": "Dark+",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.editorAssociations": {
+    "*.copilotmd": "vscode.markdown.preview.editor",
+    "{git,gitlens,chat-editing-snapshot-text-model,copilot,git-graph,git-graph-3}:/**/*.qrc": "default",
+    "*.qrc": "qt-core.qrcEditor"
+  }
+}

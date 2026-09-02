@@ -1,6 +1,12 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
+  repoPath = "${config.home.homeDirectory}/Projects/nixos-macos";
   extensions = [
     "bbenoist.qml"
     "davidanson.vscode-markdownlint"
@@ -38,20 +44,13 @@ let
   preReleaseExtension = "ms-vscode.vscode-chat-customizations-evaluations";
 in
 {
+  home.file."Library/Application Support/Code/User/settings.json".source =
+    config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/vscode/settings.json";
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
     mutableExtensionsDir = true;
-
-    profiles.default = {
-      userSettings = {
-        "workbench.colorTheme" = "Dark+";
-        "chat.mcp.gallery.enabled" = true;
-        "workbench.iconTheme" = "vscode-icons";
-        "nix.enableLanguageServer" = true;
-        "nix.serverPath" = "nil";
-      };
-    };
   };
 
   home.packages = [
