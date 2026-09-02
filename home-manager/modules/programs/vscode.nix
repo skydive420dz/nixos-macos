@@ -1,33 +1,41 @@
-{ inputs, pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
-  marketplace =
-    inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system}.vscode-marketplace-release;
-
-  marketplacePreRelease =
-    inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system}.vscode-marketplace;
-
-  marketplaceExtensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-    {
-      publisher = "ms-python";
-      name = "vscode-python-envs";
-      version = "1.30.0";
-      arch = "darwin-arm64";
-      sha256 = "1rh7pfc4v4rbqi115zszrx35dcm4vl4prhy9h0vb090yrxzh73rm";
-    }
-    {
-      publisher = "ms-vscode";
-      name = "cpp-devtools";
-      version = "0.5.13";
-      sha256 = "0g2nmpvhfx2yrsb9k1qfrc66hghv1iabqms54hjal1qa91s5gil3";
-    }
-    {
-      publisher = "ms-vscode";
-      name = "cpptools-themes";
-      version = "2.0.0";
-      sha256 = "05r7hfphhlns2i7zdplzrad2224vdkgzb0dbxg40nwiyq193jq31";
-    }
+  extensions = [
+    "bbenoist.qml"
+    "davidanson.vscode-markdownlint"
+    "eamodio.gitlens"
+    "editorconfig.editorconfig"
+    "evzen-wybitul.magic-racket"
+    "fireblast.hyprlang-vscode"
+    "jnoortheen.nix-ide"
+    "mads-hartmann.bash-ide-vscode"
+    "malmaud.tmux"
+    "ms-python.debugpy"
+    "ms-python.python"
+    "ms-python.vscode-pylance"
+    "ms-python.vscode-python-envs"
+    "ms-vscode-remote.remote-ssh"
+    "ms-vscode.cmake-tools"
+    "ms-vscode.cpp-devtools"
+    "ms-vscode.cpptools"
+    "ms-vscode.cpptools-extension-pack"
+    "ms-vscode.cpptools-themes"
+    "ms-vscode.powershell"
+    "openai.chatgpt"
+    "qingpeng.common-lisp"
+    "rszyma.vscode-kanata"
+    "sjhuangx.vscode-scheme"
+    "sumneko.lua"
+    "theqtcompany.qt-core"
+    "theqtcompany.qt-qml"
+    "tootone.org-mode"
+    "volvo-antoniacanizares.ponytail-vscode"
+    "vscode-icons-team.vscode-icons"
+    "vscodevim.vim"
   ];
+
+  preReleaseExtension = "ms-vscode.vscode-chat-customizations-evaluations";
 in
 {
   programs.vscode = {
@@ -43,38 +51,21 @@ in
         "nix.enableLanguageServer" = true;
         "nix.serverPath" = "nil";
       };
-
-      extensions =
-        (with pkgs.vscode-extensions; [
-          eamodio.gitlens
-          jnoortheen.nix-ide
-          ms-python.debugpy
-          ms-python.python
-          ms-python.vscode-pylance
-          ms-vscode.cmake-tools
-          ms-vscode.cpptools
-          ms-vscode.cpptools-extension-pack
-          ms-vscode-remote.remote-ssh
-          vscode-icons-team.vscode-icons
-          vscodevim.vim
-          marketplace.bbenoist.qml
-          marketplace.davidanson.vscode-markdownlint
-          marketplace.editorconfig.editorconfig
-          marketplace.evzen-wybitul.magic-racket
-          marketplace.fireblast.hyprlang-vscode
-          marketplace.mads-hartmann.bash-ide-vscode
-          marketplace.malmaud.tmux
-          marketplace.ms-vscode.powershell
-          marketplacePreRelease.ms-vscode.vscode-chat-customizations-evaluations
-          marketplace.qingpeng.common-lisp
-          marketplace.rszyma.vscode-kanata
-          marketplace.sjhuangx.vscode-scheme
-          marketplace.sumneko.lua
-          marketplace.theqtcompany.qt-core
-          marketplace.theqtcompany.qt-qml
-          marketplace.tootone.org-mode
-        ])
-        ++ marketplaceExtensions;
     };
   };
+
+  home.packages = [
+    (pkgs.writeShellApplication {
+      name = "vscode-install-extensions";
+      runtimeInputs = [ pkgs.vscode ];
+      text = ''
+        # ponytail: installs the declared baseline; add pruning only if exact-set convergence is needed.
+        for extension in ${lib.escapeShellArgs extensions}; do
+          code --install-extension "$extension"
+        done
+
+        code --install-extension ${lib.escapeShellArg preReleaseExtension} --pre-release
+      '';
+    })
+  ];
 }
