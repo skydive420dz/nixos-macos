@@ -1,0 +1,573 @@
+{
+  "schema": 1,
+  "release": "2026-09-04",
+  "app": {
+    "version": "1.136.1",
+    "commit": "a44adf7f53e00964ab890f9f8758a334f1fc15bc",
+    "platforms": {
+      "aarch64-darwin": {
+        "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/a44adf7f53e00964ab890f9f8758a334f1fc15bc/VSCode-darwin-arm64.zip",
+        "hash": "sha256-vRWhsmzRC6hJAPe9MPIdUe7yaIKOHhWorB+X+ZYgu+U="
+      },
+      "x86_64-linux": {
+        "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/a44adf7f53e00964ab890f9f8758a334f1fc15bc/code-stable-x64-1788413682.tar.gz",
+        "hash": "sha256-m0pU8NSb6qQT7aE30AxlQaY5MA1HnvysVmrRNBlAkhg=",
+        "name": "VSCode_1.136.1_linux-x64.tar.gz"
+      }
+    },
+    "server": {
+      "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/a44adf7f53e00964ab890f9f8758a334f1fc15bc/vscode-server-linux-x64.tar.gz",
+      "hash": "sha256-MYihsWaHogWVchb/NTndLrGeARcpVVOoi+8FOxIYhHU="
+    }
+  },
+  "extensions": [
+    {
+      "id": "bbenoist.qml",
+      "version": "1.0.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://bbenoist.gallerycdn.vsassets.io/extensions/bbenoist/qml/1.0.0/1474455311116/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "b698675650f92c0e80bbe583acb6640319cc25e4c2777513c9337525e95d8ad9"
+        }
+      }
+    },
+    {
+      "id": "davidanson.vscode-markdownlint",
+      "version": "0.62.1",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://DavidAnson.gallerycdn.vsassets.io/extensions/davidanson/vscode-markdownlint/0.62.1/1785712567757/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "cd1d295a9c564d3c5e0047d7e3dbe585a4cf736619c5c242bfad9a6eb88fb518"
+        }
+      }
+    },
+    {
+      "id": "eamodio.gitlens",
+      "version": "19.1.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://eamodio.gallerycdn.vsassets.io/extensions/eamodio/gitlens/19.1.0/1788286258582/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "f89e5653ba9f57ffc8f32a8771f5ad9e9622d090ab39bdcfd8c15625cac568ce"
+        }
+      }
+    },
+    {
+      "id": "editorconfig.editorconfig",
+      "version": "0.18.2",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://EditorConfig.gallerycdn.vsassets.io/extensions/editorconfig/editorconfig/0.18.2/1775654237423/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "cbc0370ff204bc16d84a3ee6830536fc04355856fa0e895ab064e1a03cfcb84a"
+        }
+      }
+    },
+    {
+      "id": "evzen-wybitul.magic-racket",
+      "version": "0.9.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://evzen-wybitul.gallerycdn.vsassets.io/extensions/evzen-wybitul/magic-racket/0.9.0/1788366836513/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "129492498a159d71e024aa2a4ae31ffdf4e71b1015aa673e45f5c4e7f1d9fc2d"
+        }
+      }
+    },
+    {
+      "id": "fireblast.hyprlang-vscode",
+      "version": "0.0.3",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://fireblast.gallerycdn.vsassets.io/extensions/fireblast/hyprlang-vscode/0.0.3/1759891341526/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "88c0b2a2680c186517695aaad65edb832bc58196bf5bf7961daaa40394661311"
+        }
+      }
+    },
+    {
+      "id": "jnoortheen.nix-ide",
+      "version": "0.5.13",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://jnoortheen.gallerycdn.vsassets.io/extensions/jnoortheen/nix-ide/0.5.13/1784891228028/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "d2930c9d8157f8686ce364ef7dcbfd42ac21ac48428c86bbfbac49e7515ad039"
+        }
+      }
+    },
+    {
+      "id": "mads-hartmann.bash-ide-vscode",
+      "version": "1.43.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://mads-hartmann.gallerycdn.vsassets.io/extensions/mads-hartmann/bash-ide-vscode/1.43.0/1727331578847/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "229242ce8619f8bdfd1ea06db38f3b134d117d59d984b6bdc1462cd85215f694"
+        }
+      }
+    },
+    {
+      "id": "malmaud.tmux",
+      "version": "0.4.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://malmaud.gallerycdn.vsassets.io/extensions/malmaud/tmux/0.4.0/1657039609008/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "5165e866056cf6ea234ad688388d290161aef941bd8ee364e0cc8902a367f4fe"
+        }
+      }
+    },
+    {
+      "id": "ms-python.debugpy",
+      "version": "2026.6.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "darwin-arm64": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/debugpy/2026.6.0/1777574580941/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "9a6bdb30c7f0b602d7819a089fee304382156eea3c830153a6519c1e48773ee0"
+        },
+        "universal": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/debugpy/2026.6.0/1777574550841/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "ce07c172020a73bf1ff6aa5c97d50ba104d44351130317f0a47fd248e8726997"
+        },
+        "linux-x64": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/debugpy/2026.6.0/1777574573357/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "3ae417f78bce17992b9e0efba160a43a85a8b695bd387e150d4df24e366c7b01"
+        }
+      }
+    },
+    {
+      "id": "ms-python.python",
+      "version": "2026.4.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "linux-x64": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/python/2026.4.0/1773338139366/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "1d07e60d5eab257ea5d691b26def3fff642b4d2c04fab94424e8b8fe25baf656"
+        },
+        "darwin-arm64": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/python/2026.4.0/1773338164586/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "5e7b62426bda82249671f548a75dc20ead914d9e0d84a3b37f842679c663308b"
+        }
+      }
+    },
+    {
+      "id": "ms-python.vscode-pylance",
+      "version": "2026.3.1",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/vscode-pylance/2026.3.1/1784661006973/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "265d5f980b5ce303d5d1c504f276c865d3abd4a93ca661d4aba6424fa93493ae"
+        }
+      }
+    },
+    {
+      "id": "ms-python.vscode-python-envs",
+      "version": "1.36.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "darwin-arm64": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/vscode-python-envs/1.36.0/1781815430800/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "faff14fda14da7f6fa0e3eb627e30b610f1d71f3b8aa29d677f5d24fa9ed9cd7"
+        },
+        "linux-x64": {
+          "url": "https://ms-python.gallerycdn.vsassets.io/extensions/ms-python/vscode-python-envs/1.36.0/1781815407451/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "7cea86fc649098a0c7037275d31fe6f6ae5446348f028587aa0fce7d9b73e35f"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode-remote.remote-ssh",
+      "version": "0.128.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode-remote.gallerycdn.vsassets.io/extensions/ms-vscode-remote/remote-ssh/0.128.0/1787756180138/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "458bfdea562840a3a4d9cb246cfe9a212c67a0c9317a8fdd0d22aeaedc82bf2c"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode-remote.remote-ssh-edit",
+      "version": "0.87.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode-remote.gallerycdn.vsassets.io/extensions/ms-vscode-remote/remote-ssh-edit/0.87.0/1727817208654/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "c9e5fa440265d3b77e4ae63219014b64d714cd5280b263c5c932849fecb71ae3"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.cmake-tools",
+      "version": "1.23.52",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/cmake-tools/1.23.52/1776892768875/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "2df6282a289a113b65ab826a7b56dde56692e67068722f4ae81ba0663818d87a"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.cpp-devtools",
+      "version": "0.6.18",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/cpp-devtools/0.6.18/1787682523782/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "e5eab49b58cec98ccdf0908958759015d92dd4ecef05c3bd3fb710e5d63b0e80"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.cpptools",
+      "version": "1.33.8",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "linux-x64": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/cpptools/1.33.8/1786993276611/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "3a4e6393a5d4aab4a1eaf249c88c9d03a698130dc686c447aa38c4b26cebeffd"
+        },
+        "darwin-arm64": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/cpptools/1.33.8/1786993245290/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "7ec1e63d65270c3af87dc44c04f7a95e7c4886a5c3b7d66c063b542f5543ef51"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.cpptools-extension-pack",
+      "version": "1.5.1",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/cpptools-extension-pack/1.5.1/1771540600646/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "e639affc29ee00cc06f1ab2f5b6896f23f37ee57672d9deb25241b36c36f3743"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.cpptools-themes",
+      "version": "2.0.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/cpptools-themes/2.0.0/1666648137053/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "61603952c03e720bc8ebab81f5df6c9b08219aca9fdef64f14da5208af832717"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.powershell",
+      "version": "2025.4.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/powershell/2025.4.0/1759954461928/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "458eef45b6110e3d9867d23943b843ca4a9d0d96d1672db5ad156bc178f6b283"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.remote-explorer",
+      "version": "0.5.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/remote-explorer/0.5.0/1746816943135/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "04db277ada5d771bf763d323644454e633aad48da0e81345175ac3ec08299abf"
+        }
+      }
+    },
+    {
+      "id": "ms-vscode.vscode-chat-customizations-evaluations",
+      "version": "1.1.2026090319",
+      "channel": "prerelease",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://ms-vscode.gallerycdn.vsassets.io/extensions/ms-vscode/vscode-chat-customizations-evaluations/1.1.2026090319/1788463260387/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "e19498a13522b81d2bb5cb1f1c63c50f695f1fd557a25447ed94791c7dd7ba72"
+        }
+      },
+      "repair": {
+        "path": "client/out/extension.js",
+        "before": "vscode.window.createOutputChannel(\"Chat Customizations Evaluations\")",
+        "after": "vscode.window.createOutputChannel(\"Chat Customizations Evaluations\", { log: true })",
+        "before_sha256": "365c97543853530a074aae75bd2c1c72fd26d10e0514037eebee79c18409a110",
+        "after_sha256": "17812950610a5b4acf88762322d4aac4151bae324aad76e9f3fbf88eb9912b8e"
+      }
+    },
+    {
+      "id": "omkarshitole.bubblewrap",
+      "version": "0.0.4",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://OmkarShitole.gallerycdn.vsassets.io/extensions/omkarshitole/bubblewrap/0.0.4/1715653908555/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "36cbd45a54bd4837ac1afb029fb25897d6607b89c65df956502cf1d4fa2b2121"
+        }
+      }
+    },
+    {
+      "id": "openai.chatgpt",
+      "version": "26.901.22334",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "linux-x64": {
+          "url": "https://openai.gallerycdn.vsassets.io/extensions/openai/chatgpt/26.901.22334/1788458837719/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "84c696868aae8529f36282f2d576d8fcc2d8b3be4d0071a7e7251af604691555"
+        },
+        "darwin-arm64": {
+          "url": "https://openai.gallerycdn.vsassets.io/extensions/openai/chatgpt/26.901.22334/1788458673999/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "7475991544cb1faaab67148b221807ec1a3f98cc34cfab4cd5604b742c98da02"
+        }
+      },
+      "repair": {
+        "before": "this.subscriptions.push(a,n(()=>{s.dispose(),this.chunkedMessageSender.dispose(e)})),e.html=await this.getWebviewContent(e),s.start()}",
+        "after": "let c=r===\"sidebar\"?Array.from(this.sidebarViews).find(p=>p.webview===e):this.findPanelByWebview(e),l=()=>{c?.visible===!1?s.timeout!=null&&(clearTimeout(s.timeout),s.timeout=void 0):s.start()},u,p={dispose:()=>{u?.dispose(),s.dispose()}},m=s.onTimeout;s.onTimeout=f=>{p.dispose(),m(f)};this.subscriptions.push(a,p,n(()=>{p.dispose(),this.chunkedMessageSender.dispose(e)})),e.html=await this.getWebviewContent(e),s.disposed||(u=c?(r===\"sidebar\"?c.onDidChangeVisibility(l):c.onDidChangeViewState(l)):void 0,l())}",
+        "before_sha256": "e8d3bb57b73a1fd316fd557859aec56e540b48de3489012d1952fa4a2e371208",
+        "after_sha256": "e68867160f3fcba3642c0ec7beb427c11333bcb8c17b4550938fc4e02018e4ff",
+        "path": "out/extension.js"
+      }
+    },
+    {
+      "id": "qingpeng.common-lisp",
+      "version": "1.2.11",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://qingpeng.gallerycdn.vsassets.io/extensions/qingpeng/common-lisp/1.2.11/1715366247927/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "d1bcb361bdb904335ec020f821e9f27317e60c22f2439a428062efa247572079"
+        }
+      }
+    },
+    {
+      "id": "rszyma.vscode-kanata",
+      "version": "0.15.23",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://rszyma.gallerycdn.vsassets.io/extensions/rszyma/vscode-kanata/0.15.23/1783240036290/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "7ccbf8fa32e7b26497295103f503f342908d187c28abd775aa8ee5e8ce28da79"
+        }
+      }
+    },
+    {
+      "id": "sjhuangx.vscode-scheme",
+      "version": "0.4.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://sjhuangx.gallerycdn.vsassets.io/extensions/sjhuangx/vscode-scheme/0.4.0/1553580803856/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "04df82eb8610da1530e503222af0bb3c7cf7208e65115572d1286db7ab77721f"
+        }
+      }
+    },
+    {
+      "id": "sumneko.lua",
+      "version": "3.19.1",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "linux-x64": {
+          "url": "https://sumneko.gallerycdn.vsassets.io/extensions/sumneko/lua/3.19.1/1786659394902/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "b07029e5df75ce0754dce1227f9c9b34321d38ea13e61410913d970b78570dde"
+        },
+        "darwin-arm64": {
+          "url": "https://sumneko.gallerycdn.vsassets.io/extensions/sumneko/lua/3.19.1/1786659272831/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "1dbf604c8cc28d9298173e695b7216a3fd3d52db75bc4e8cb8242ac320d866c4"
+        }
+      }
+    },
+    {
+      "id": "theqtcompany.qt-core",
+      "version": "1.16.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://TheQtCompany.gallerycdn.vsassets.io/extensions/theqtcompany/qt-core/1.16.0/1787923069323/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "e8d056b0aee58f1ec87b7c6f3ab8c10a5cafc103f5525b429dad634072524f95"
+        }
+      }
+    },
+    {
+      "id": "theqtcompany.qt-qml",
+      "version": "1.16.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://TheQtCompany.gallerycdn.vsassets.io/extensions/theqtcompany/qt-qml/1.16.0/1787923333675/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "4168d449b06d1c8771619c910439fae075e1bd2c218339bb0e30da79dea535db"
+        }
+      }
+    },
+    {
+      "id": "tootone.org-mode",
+      "version": "0.5.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://tootone.gallerycdn.vsassets.io/extensions/tootone/org-mode/0.5.0/1513017541408/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "bd7c28de814bc0aff063b5c4a61f651af5d82318d9b317881384d50113a6576a"
+        }
+      }
+    },
+    {
+      "id": "volvo-antoniacanizares.ponytail-vscode",
+      "version": "1.2.0",
+      "channel": "stable",
+      "targets": [
+        "msi-ssh"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://Volvo-AntoniaCanizares.gallerycdn.vsassets.io/extensions/volvo-antoniacanizares/ponytail-vscode/1.2.0/1786945115156/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "8dd59a4d3ed0937089d1f6a3109f141d97d1e98c82ac0af432adb54aac93cc00"
+        }
+      }
+    },
+    {
+      "id": "vscode-icons-team.vscode-icons",
+      "version": "12.19.0",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://vscode-icons-team.gallerycdn.vsassets.io/extensions/vscode-icons-team/vscode-icons/12.19.0/1782585231472/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "6891095459234809b9c5161850f2dabc91a80b3eca2daf599d050a88b455e960"
+        }
+      },
+      "generatedFiles": [
+        "dist/src/vsicons-icon-theme.json",
+        "dist/src/vsicons-icon-theme-zed.json"
+      ]
+    },
+    {
+      "id": "vscodevim.vim",
+      "version": "1.32.4",
+      "channel": "stable",
+      "targets": [
+        "mac-ui",
+        "msi-ui"
+      ],
+      "artifacts": {
+        "universal": {
+          "url": "https://vscodevim.gallerycdn.vsassets.io/extensions/vscodevim/vim/1.32.4/1765753483040/Microsoft.VisualStudio.Services.VSIXPackage",
+          "sha256": "fa1c896629d6b1ae94facd1f76bc76c148bab4e57714d29ff0ed6a30c6447644"
+        }
+      }
+    }
+  ],
+  "builtInExtensions": {
+    "github.copilot-chat": "0.64.1"
+  }
+}

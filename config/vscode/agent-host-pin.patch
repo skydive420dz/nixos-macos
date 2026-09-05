@@ -1,0 +1,325 @@
+--- a/cli/src/tunnels/agent_host.rs
++++ b/cli/src/tunnels/agent_host.rs
+@@ -8,7 +8,9 @@
+ use std::path::PathBuf;
+ use std::sync::atomic::{AtomicBool, Ordering};
+ use std::sync::Arc;
+-use std::time::{Duration, Instant};
++use std::time::Duration;
++#[cfg(test)]
++use std::time::Instant;
+ 
+ use ::http::{Request, Response};
+ use futures::{SinkExt, StreamExt};
+@@ -28,7 +30,7 @@
+ use crate::async_pipe::{
+ 	get_socket_name, get_socket_rw_stream, listen_socket_rw_stream, AsyncPipe, AsyncPipeListener,
+ };
+-use crate::constants::VSCODE_CLI_QUALITY;
++use crate::constants::{VSCODE_CLI_COMMIT, VSCODE_CLI_QUALITY, VSCODE_CLI_VERSION};
+ use crate::download_cache::DownloadCache;
+ use crate::log;
+ use crate::options::{Quality, TelemetryLevel};
+@@ -63,31 +65,6 @@
+ /// CLI and may therefore advertise the management RPC method to clients.
+ pub const MANAGEMENT_SOCKET_ENV: &str = "VSCODE_AGENT_HOST_MANAGEMENT_SOCKET";
+ 
+-/// Environment variable holding a commit SHA used to override the agent
+-/// host version the *first* time it is resolved. When set, the agent host
+-/// is initially downloaded and started at this commit; subsequent upgrades
+-/// still resolve the real latest version. Intended for testing the upgrade
+-/// flow.
+-pub const INITIAL_AGENT_HOST_VERSION_ENV: &str = "VSCODE_CLI_INITIAL_AH_VERSION";
+-
+-/// Reads {@link INITIAL_AGENT_HOST_VERSION_ENV}, returning the commit SHA
+-/// override if it is set to a non-empty value. The value is restricted to
+-/// hex digits so it can't smuggle path separators (`/`, `..`) or other
+-/// characters into the URL and filesystem paths derived from the commit.
+-fn initial_agent_host_version() -> Option<String> {
+-	match std::env::var(INITIAL_AGENT_HOST_VERSION_ENV) {
+-		Ok(v) => {
+-			let v = v.trim();
+-			if !v.is_empty() && v.chars().all(|c| c.is_ascii_hexdigit()) {
+-				Some(v.to_string())
+-			} else {
+-				None
+-			}
+-		}
+-		_ => None,
+-	}
+-}
+-
+ /// Delay between sending the upgrade response and actually killing the
+ /// running server. Lets the response hop back through the CLI proxy and
+ /// reach the requesting client before the transport drops out from under
+@@ -118,8 +95,6 @@
+ 	platform: Platform,
+ 	cache: DownloadCache,
+ 	update_service: UpdateService,
+-	/// The latest known release, with the time it was checked.
+-	latest_release: Mutex<Option<(Instant, Release)>>,
+ 	/// The currently running server, if any.
+ 	running: Mutex<Option<RunningServer>>,
+ 	/// Barrier that opens when a server is ready (socket path available).
+@@ -153,7 +128,6 @@
+ 			config,
+ 			platform,
+ 			cache,
+-			latest_release: Mutex::new(None),
+ 			running: Mutex::new(None),
+ 			ready: Mutex::new(None),
+ 			management_socket_path: get_socket_name(),
+@@ -376,71 +350,8 @@
+ 		});
+ 	}
+ 
+-	/// Returns a release and its local directory. Prefers the latest known
+-	/// release if it has already been downloaded; otherwise falls back to any
+-	/// cached version. Only fetches from the network and downloads if
+-	/// nothing is cached at all.
++	/// Only use this CLI build's release; a different cached backend is incompatible.
+ 	async fn get_cached_or_download(&self) -> Result<(Release, PathBuf), CodeError> {
+-		// When using a dev override, skip the update service entirely -
+-		// the override path is used directly by run_server().
+-		if option_env!("VSCODE_CLI_OVERRIDE_SERVER_PATH").is_some() {
+-			let release = Release {
+-				name: String::new(),
+-				commit: String::from("dev"),
+-				platform: self.platform,
+-				target: TargetKind::Server,
+-				quality: Quality::Insiders,
+-			};
+-			return Ok((release, PathBuf::new()));
+-		}
+-
+-		// Best case: the latest known release is already downloaded
+-		if let Some((_, release)) = &*self.latest_release.lock().await {
+-			let name = get_server_folder_name(release.quality, &release.commit);
+-			if let Some(dir) = self.cache.exists(&name) {
+-				return Ok((release.clone(), dir));
+-			}
+-		}
+-
+-		// On the very first resolution, an explicit initial version override
+-		// (used to test the upgrade flow) must win over the generic cached
+-		// fallback below so the requested commit is what we download and start.
+-		if self.latest_release.lock().await.is_none() && initial_agent_host_version().is_some() {
+-			let release = self.get_latest_release().await?;
+-			let dir = self.ensure_downloaded(&release).await?;
+-			return Ok((release, dir));
+-		}
+-
+-		let quality = VSCODE_CLI_QUALITY
+-			.ok_or(CodeError::UpdatesNotConfigured("no configured quality"))
+-			.and_then(|q| {
+-				Quality::try_from(q).map_err(|_| CodeError::UpdatesNotConfigured("unknown quality"))
+-			})?;
+-
+-		// Fall back to any cached version (still instant, just not the newest).
+-		// Cache entries are named "<quality>-<commit>" via get_server_folder_name.
+-		for entry in self.cache.get() {
+-			if let Some(dir) = self.cache.exists(&entry) {
+-				let (entry_quality, commit) = match entry.split_once('-') {
+-					Some((q, c)) => match Quality::try_from(q.to_lowercase().as_str()) {
+-						Ok(parsed) => (parsed, c.to_string()),
+-						Err(_) => (quality, entry.clone()),
+-					},
+-					None => (quality, entry.clone()),
+-				};
+-				let release = Release {
+-					name: String::new(),
+-					commit,
+-					platform: self.platform,
+-					target: TargetKind::Server,
+-					quality: entry_quality,
+-				};
+-				return Ok((release, dir));
+-			}
+-		}
+-
+-		// Nothing cached — must fetch and download (blocks the first connection)
+-		info!(self.log, "No cached server version, downloading latest...");
+ 		let release = self.get_latest_release().await?;
+ 		let dir = self.ensure_downloaded(&release).await?;
+ 		Ok((release, dir))
+@@ -477,57 +388,23 @@
+ 			.map_err(|e| CodeError::ServerDownloadError(e.to_string()))
+ 	}
+ 
+-	/// Gets the latest release, caching the result.
++	/// Application, SSH server, and Agent Host are upgraded as one pinned release.
++	/// Manual upgrade requests also pass here, so they cannot bypass the pin.
+ 	pub async fn get_latest_release(&self) -> Result<Release, CodeError> {
+-		let mut latest = self.latest_release.lock().await;
+-		let now = Instant::now();
+-
+ 		let quality = VSCODE_CLI_QUALITY
+ 			.ok_or(CodeError::UpdatesNotConfigured("no configured quality"))
+ 			.and_then(|q| {
+ 				Quality::try_from(q).map_err(|_| CodeError::UpdatesNotConfigured("unknown quality"))
+ 			})?;
+-
+-		// The first time we resolve a version, honor an explicit commit
+-		// override so the upgrade flow can be tested: the agent host is
+-		// initially downloaded and started at this commit, and a subsequent
+-		// upgrade (which calls this method again, with `latest` already set)
+-		// still resolves the real latest version.
+-		if latest.is_none() {
+-			if let Some(commit) = initial_agent_host_version() {
+-				let release = Release {
+-					name: String::new(),
+-					commit,
+-					platform: self.platform,
+-					target: TargetKind::Server,
+-					quality,
+-				};
+-				info!(
+-					self.log,
+-					"Using initial agent host version override: {}", release.commit
+-				);
+-				*latest = Some((now, release.clone()));
+-				return Ok(release);
+-			}
+-		}
+-
+-		let result = self
+-			.update_service
+-			.get_latest_commit(self.platform, TargetKind::Server, quality)
+-			.await
+-			.map_err(|e| CodeError::UpdateCheckFailed(e.to_string()));
+-
+-		// If the update service is unavailable, fall back to the cached version
+-		if let (Err(e), Some((_, previous))) = (&result, latest.clone()) {
+-			warning!(self.log, "Error checking for updates, using cached: {}", e);
+-			*latest = Some((now, previous.clone()));
+-			return Ok(previous);
+-		}
+-
+-		let release = result?;
+-		debug!(self.log, "Resolved server version: {}", release);
+-		*latest = Some((now, release.clone()));
+-		Ok(release)
++		Ok(Release {
++			name: VSCODE_CLI_VERSION.unwrap_or("unknown").to_string(),
++			commit: VSCODE_CLI_COMMIT
++				.ok_or(CodeError::UpdatesNotConfigured("no pinned build commit"))?
++				.to_string(),
++			platform: self.platform,
++			target: TargetKind::Server,
++			quality,
++		})
+ 	}
+ 
+ 	/// Background loop: checks for updates periodically and pre-downloads
+@@ -2250,7 +2127,7 @@
+ mod tests {
+ 	use super::*;
+ 	use crate::util::http::ReqwestSimpleHttp;
+-	use std::path::Path;
++	use std::{future::Future, path::Path, pin::Pin};
+ 
+ 	fn make_test_manager(cache_dir: &Path) -> Arc<AgentHostManager> {
+ 		AgentHostManager::new(
+@@ -2266,6 +2143,52 @@
+ 				connection_token_file: None,
+ 			},
+ 		)
++	}
++
++	#[tokio::test]
++	async fn coordinated_pin_rejects_other_cached_versions_and_stays_pinned() {
++		struct NoNetwork;
++		impl http::SimpleHttp for NoNetwork {
++			fn make_request(
++				&self,
++				_method: &'static str,
++				url: String,
++			) -> Pin<Box<dyn Future<Output = Result<http::SimpleResponse, AnyError>> + Send + '_>>
++			{
++				assert!(url.contains(&format!("/commit:{}/", VSCODE_CLI_COMMIT.unwrap())));
++				Box::pin(async {
++					Err(wrap(
++						std::io::Error::other("offline pin test"),
++						"offline pin test",
++					)
++					.into())
++				})
++			}
++		}
++		let dir = tempfile::tempdir().unwrap();
++		let mut manager = make_test_manager(dir.path());
++		Arc::get_mut(&mut manager).unwrap().update_service =
++			UpdateService::new(log::Logger::test(), Arc::new(NoNetwork));
++		let release = manager.get_latest_release().await.unwrap();
++		assert_eq!(release.commit, VSCODE_CLI_COMMIT.unwrap());
++		assert_eq!(release.quality, Quality::Stable);
++		assert_eq!(
++			manager.get_latest_release().await.unwrap().commit,
++			release.commit
++		);
++		let other_name =
++			get_server_folder_name(Quality::Stable, "0000000000000000000000000000000000000000");
++		std::fs::create_dir_all(dir.path().join(&other_name)).unwrap();
++		manager.cache.exists(&other_name).unwrap();
++		assert!(manager.get_cached_or_download().await.is_err());
++		let pinned_dir = dir
++			.path()
++			.join(get_server_folder_name(release.quality, &release.commit));
++		std::fs::create_dir_all(&pinned_dir).unwrap();
++		assert_eq!(
++			manager.get_cached_or_download().await.unwrap().1,
++			pinned_dir
++		);
+ 	}
+ 
+ 	#[tokio::test]
+--- a/cli/src/bin/code/main.rs
++++ b/cli/src/bin/code/main.rs
+@@ -36,6 +36,10 @@
+ 			}
+ 		});
+ 
++	if !is_agent_command(&parsed) {
++		print_and_exit("This coordinated CLI only runs Agent Host commands; set remote.SSH.useExecServer=false for Remote-SSH.");
++	}
++
+ 	let core = parsed.core();
+ 	let context_paths = LauncherPaths::migrate(core.global_options.cli_data_dir.clone()).unwrap();
+ 	let context_args = core.clone();
+@@ -210,3 +214,36 @@
+ 
+ 	Ok(code)
+ }
++
++// The shared SSH path must never run an unsigned source-built command-shell.
++fn is_agent_command(cli: &args::AnyCli) -> bool {
++	matches!(&cli.core().subcommand, Some(args::Commands::Agent(_)))
++}
++
++#[test]
++fn coordinated_cli_accepts_only_agent_commands() {
++	for (argv, expected) in [
++		(vec!["code", "agent", "endpoints"], true),
++		(
++			vec![
++				"code",
++				"--cli-data-dir",
++				"/tmp/cli",
++				"--telemetry-level",
++				"off",
++				"agent",
++				"host",
++			],
++			true,
++		),
++		(vec!["code", "command-shell"], false),
++		(
++			vec!["code", "--cli-data-dir", "agent", "command-shell"],
++			false,
++		),
++		(vec!["code", "tunnel"], false),
++	] {
++		let cli = args::AnyCli::Standalone(args::StandaloneCli::try_parse_from(argv).unwrap());
++		assert_eq!(is_agent_command(&cli), expected);
++	}
++}

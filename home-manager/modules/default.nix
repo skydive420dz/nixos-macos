@@ -13,6 +13,7 @@
     ./programs/ghostty.nix
     ./programs/starship.nix
     ./programs/vscode.nix
+    ./programs/wezterm.nix
     ./programs/yazi.nix
     ./programs/zsh.nix
   ];

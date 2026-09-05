@@ -16,10 +16,11 @@
         "/Applications/Safari.app"
         "/System/Applications/Mail.app"
         "/Users/skydive420dz/Applications/Home Manager Apps/Ghostty.app"
+        "/Users/skydive420dz/Applications/Home Manager Apps/WezTerm.app"
         "/System/Applications/Music.app"
         "/System/Applications/iPhone Mirroring.app"
         "/System/Applications/Maps.app"
-        "/Users/skydive420dz/Applications/Home Manager Apps/Visual Studio Code.app"
+        "/Users/skydive420dz/Applications/Home Manager Apps/VS Code MSI.app"
         "/System/Applications/Reminders.app"
         "/System/Applications/Notes.app"
       ];

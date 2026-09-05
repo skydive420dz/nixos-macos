@@ -1,47 +1,16 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 
 let
   repoPath = "${config.home.homeDirectory}/Projects/nixos-macos";
-  extensions = [
-    "bbenoist.qml"
-    "davidanson.vscode-markdownlint"
-    "eamodio.gitlens"
-    "editorconfig.editorconfig"
-    "evzen-wybitul.magic-racket"
-    "fireblast.hyprlang-vscode"
-    "jnoortheen.nix-ide"
-    "mads-hartmann.bash-ide-vscode"
-    "malmaud.tmux"
-    "ms-python.debugpy"
-    "ms-python.python"
-    "ms-python.vscode-pylance"
-    "ms-python.vscode-python-envs"
-    "ms-vscode-remote.remote-ssh"
-    "ms-vscode.cmake-tools"
-    "ms-vscode.cpp-devtools"
-    "ms-vscode.cpptools"
-    "ms-vscode.cpptools-extension-pack"
-    "ms-vscode.cpptools-themes"
-    "ms-vscode.powershell"
-    "openai.chatgpt"
-    "qingpeng.common-lisp"
-    "rszyma.vscode-kanata"
-    "sjhuangx.vscode-scheme"
-    "sumneko.lua"
-    "theqtcompany.qt-core"
-    "theqtcompany.qt-qml"
-    "tootone.org-mode"
-    "volvo-antoniacanizares.ponytail-vscode"
-    "vscode-icons-team.vscode-icons"
-    "vscodevim.vim"
-  ];
-
-  preReleaseExtension = "ms-vscode.vscode-chat-customizations-evaluations";
+  vscode = import ../../../config/vscode/package.nix { inherit pkgs; };
+  launchMsi = pkgs.writeShellScript "launch-vscode-msi" ''
+    unset VSCODE_IPC_HOOK_CLI VSCODE_CLI_AUTHORITY
+    exec ${vscode}/bin/code --remote ssh-remote+msi "$@"
+  '';
 in
 {
   home.file."Library/Application Support/Code/User/settings.json".source =
@@ -49,21 +18,40 @@ in
 
   programs.vscode = {
     enable = true;
-    package = pkgs.vscode;
+    package = vscode;
     mutableExtensionsDir = true;
   };
 
   home.packages = [
+    (pkgs.runCommandLocal "vscode-msi-launcher" { } ''
+      app="$out/Applications/VS Code MSI.app/Contents"
+      mkdir -p "$app/MacOS" "$app/Resources"
+      cp ${launchMsi} "$app/MacOS/launch"
+      cp '${vscode}/Applications/Visual Studio Code.app/Contents/Resources/Code.icns' "$app/Resources/Code.icns"
+      cat > "$app/Info.plist" <<'PLIST'
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0"><dict>
+      <key>CFBundleIdentifier</key><string>local.vscode-msi</string>
+      <key>CFBundleName</key><string>VS Code MSI</string>
+      <key>CFBundlePackageType</key><string>APPL</string>
+      <key>CFBundleExecutable</key><string>launch</string>
+      <key>CFBundleIconFile</key><string>Code.icns</string>
+      <key>LSUIElement</key><true/>
+      </dict></plist>
+      PLIST
+    '')
     (pkgs.writeShellApplication {
       name = "vscode-install-extensions";
-      runtimeInputs = [ pkgs.vscode ];
+      runtimeInputs = [ pkgs.python3 ];
       text = ''
-        # ponytail: installs the declared baseline; add pruning only if exact-set convergence is needed.
-        for extension in ${lib.escapeShellArgs extensions}; do
-          code --install-extension "$extension"
-        done
-
-        code --install-extension ${lib.escapeShellArg preReleaseExtension} --pre-release
+        exec python3 ${../../../config/vscode/extensions.py} "$@" --manifest ${../../../config/vscode/release.json}
+      '';
+    })
+    (pkgs.writeShellApplication {
+      name = "code-msi";
+      text = ''
+        exec ${launchMsi} "$@"
       '';
     })
   ];

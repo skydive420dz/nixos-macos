@@ -46,9 +46,9 @@
       ];
 
       mode.main.binding = {
-        ctrl-alt-enter = "exec-and-forget open -na Ghostty";
+        ctrl-alt-enter = "exec-and-forget open -na WezTerm";
         ctrl-alt-t = "exec-and-forget open -na Emacs";
-        ctrl-alt-c = "exec-and-forget open -na 'Visual Studio Code'";
+        ctrl-alt-c = "exec-and-forget /etc/profiles/per-user/skydive420dz/bin/code-msi";
         ctrl-alt-b = "exec-and-forget open -na Safari";
         ctrl-alt-e = "exec-and-forget open -a Finder";
 
