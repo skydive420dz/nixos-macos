@@ -242,5 +242,6 @@
     "github.copilot-chat": [
       "0.64.1"
     ]
-  }
+  },
+  "terminal.integrated.stickyScroll.enabled": false
 }
