@@ -62,6 +62,9 @@ in
 
       alternate_buffer_wheel_scroll_speed = 5;
       scrollback_lines = 10000000;
+      window_background_opacity = 0.75;
+      text_background_opacity = 1.0;
+      macos_window_background_blur = 20;
       window_decorations = "RESIZE";
       window_padding = {
         left = 10;
