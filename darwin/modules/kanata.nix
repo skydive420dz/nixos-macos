@@ -74,13 +74,9 @@ in
   };
 
   launchd.daemons.kanata = {
+    command = lib.escapeShellArgs [ kanataBin "--cfg" configFile ];
     serviceConfig = {
       Label = "org.nixos.kanata";
-      ProgramArguments = [
-        kanataBin
-        "--cfg"
-        configFile
-      ];
       RunAtLoad = true;
       KeepAlive = false;
       ProcessType = "Interactive";
