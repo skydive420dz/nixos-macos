@@ -1,34 +1,35 @@
 {
-  pkgs,
-  username,
-  homeDirectory,
-  ...
+    pkgs,
+    username,
+    homeDirectory,
+    ...
 }:
 
 {
-  home = {
-    inherit username homeDirectory;
-    stateVersion = "25.11";
-    enableNixpkgsReleaseCheck = false;
+    home = {
+        inherit username homeDirectory;
+        stateVersion = "25.11";
+        enableNixpkgsReleaseCheck = false;
 
-    packages = with pkgs; [
-      bitwarden-cli
-      ripgrep
-      fd
-      curl
-      jq
-      less
-      ffmpeg-full
-      vlc-bin
-      inkscape
-      darktable
-      libreoffice-bin
-      vesktop
-    ];
+        packages = with pkgs; [
+            bitwarden-cli
+            ripgrep
+            brave-origin
+            fd
+            curl
+            jq
+            less
+            ffmpeg-full
+            vlc-bin
+            inkscape
+            darktable
+            libreoffice-bin
+            vesktop
+        ];
 
-    sessionVariables = {
-      PAGER = "less";
-      CLICOLOR = "1";
+        sessionVariables = {
+            PAGER = "less";
+            CLICOLOR = "1";
+        };
     };
-  };
 }
