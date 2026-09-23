@@ -181,7 +181,6 @@ in
     ];
 
     # Doom is frozen reference material; clean Emacs is the active config.
-    home.file.".doom.d".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/doom";
     home.file.".cache/emacs/tree-sitter-grammars".source = emacsTreeSitterGrammarBundle;
     home.file.".cache/emacs/lua/neovim-runtime".source = emacsNeovimRuntimePath;
     xdg.configFile."doom".source = config.lib.file.mkOutOfStoreSymlink "${repoPath}/config/doom";

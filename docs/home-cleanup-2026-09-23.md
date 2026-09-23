@@ -130,3 +130,39 @@ No post-cleanup interactive application acceptance test was performed. Deleting
 local transcripts intentionally means old local conversations may no longer
 open even when mixed runtime-state databases retain their entries. The removed
 backups and history are not recoverable from this documentation or Git commit.
+
+## Follow-up: redundant .doom.d link
+
+The user separately approved removing only the `.doom.d` Home Manager
+declaration and live symlink, with validation and a documented commit.
+
+SUPPORTED by source inspection and the SSH change/validation receipts:
+
+- Removed `home.file.".doom.d".source` from
+  `home-manager/modules/programs/emacs.nix`.
+- Unlinked `/Users/skydive420dz/.doom.d` after verifying it was a symlink
+  resolving to `/Users/skydive420dz/Projects/nixos-macos/config/doom`.
+  Its absence was checked with `os.path.lexists`.
+- Preserved `/Users/skydive420dz/.config/doom`,
+  `/Users/skydive420dz/.config/emacs`, and both repository target directories.
+  Before/after checks matched link text, resolved paths, and target inodes.
+  This was not a recursive content comparison.
+- `nix-instantiate --parse` passed for the candidate on stdin and the edited
+  module. `git diff --check` passed.
+- The repository was clean before the change. Only the Emacs module and this
+  cleanup note are included in the follow-up commit.
+
+DERIVED rationale: the removed link is redundant for the inspected clean Emacs
+workflow. The module labels Doom as frozen reference material, and the installed
+`emacs-sync` loads `.config/emacs/early-init.el` and `.config/emacs/init.el`.
+The retained `.config/doom` still provides access to the reference files.
+
+No build, full flake evaluation, activation, Emacs launch, Doom command, channel
+operation, garbage collection, or push was performed. Syntax validation is not
+runtime acceptance. Uninspected external scripts may still refer to `.doom.d`.
+
+The currently activated Home Manager generation still declares `.doom.d` and
+could recreate it if reactivated. The source change removes that declaration
+for a future rebuild; no deployment is claimed here. To undo this cleanup,
+restore the declaration from Git and restore `.doom.d` as a symlink to the
+preserved reference directory. Do not delete that directory or Nix-store links.
