@@ -105,3 +105,7 @@ check for diagnostics. This does not affect the tested native relay path.
 The release controls installed extensions and their bundled runtimes. Account
 model availability and services hosted by OpenAI/Microsoft remain external;
 confirm Astra with an actual request for each accepted release.
+
+## Maintenance records
+
+- [Mac home cleanup, 2026-09-23](docs/home-cleanup-2026-09-23.md)
