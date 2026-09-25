@@ -340,8 +340,8 @@ in
             navbuddy.enable = true;
             nvim-navic.enable = true;
           };
-          activeSection.a = [
-            ''
+          setupOpts.sections.lualine_a = [
+            (mkLuaInline ''
               {
                 "mode",
                 icons_enabled = true,
@@ -351,14 +351,14 @@ in
                   right = ''
                 },
               }
-            ''
-            ''
+            '')
+            (mkLuaInline ''
               {
                 "",
                 draw_empty = true,
                 separator = { left = '', right = '' }
               }
-            ''
+            '')
           ];
         };
         autocomplete.blink-cmp = {

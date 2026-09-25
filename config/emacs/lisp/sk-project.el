@@ -5,7 +5,7 @@
 
 (defun sk/project-root ()
   "Return the current project root, or nil outside a project."
-  (when-let ((project (project-current nil)))
+  (when-let* ((project (project-current nil)))
     (project-root project)))
 
 (defun sk/project-vterm ()
@@ -17,7 +17,7 @@
 (defun sk/project-notes ()
   "Open a note for the current project."
   (interactive)
-  (if-let ((root (sk/project-root)))
+  (if-let* ((root (sk/project-root)))
       (let* ((name (file-name-nondirectory (directory-file-name root)))
              (file (expand-file-name
                     (concat "projects/" name ".org")

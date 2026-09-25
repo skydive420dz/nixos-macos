@@ -159,7 +159,7 @@
   (let ((file (sk/current-file)))
     (if (not relative)
         file
-      (if-let ((project (project-current nil)))
+      (if-let* ((project (project-current nil)))
           (file-relative-name file (project-root project))
         (file-name-nondirectory file)))))
 
@@ -218,7 +218,7 @@
 
 (defun sk/read-project-root ()
   "Return the current project root or raise a user error."
-  (or (when-let ((project (project-current nil)))
+  (or (when-let* ((project (project-current nil)))
         (project-root project))
       (user-error "Not in a project")))
 
@@ -268,7 +268,7 @@
 (defun sk/project-recompile ()
   "Run `recompile' from the current project root."
   (interactive)
-  (let ((default-directory (or (when-let ((project (project-current nil)))
+  (let ((default-directory (or (when-let* ((project (project-current nil)))
                                 (project-root project))
                               default-directory)))
     (recompile)))
@@ -291,7 +291,7 @@
         (saved 0))
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
-        (when-let ((file (buffer-file-name)))
+        (when-let* ((file (buffer-file-name)))
           (when (and (buffer-modified-p)
                      (file-in-directory-p file root))
             (save-buffer)
@@ -305,7 +305,7 @@
         (killed 0))
     (dolist (buffer (buffer-list))
       (with-current-buffer buffer
-        (when-let ((file (buffer-file-name)))
+        (when-let* ((file (buffer-file-name)))
           (when (file-in-directory-p file root)
             (kill-buffer buffer)
             (setq killed (1+ killed))))))

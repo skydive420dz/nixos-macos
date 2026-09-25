@@ -58,7 +58,7 @@
 (defun sk/tree-sitter-add-load-paths ()
   "Add Nix-provided Tree-sitter grammar directories to Emacs."
   (dolist (dir (append
-                (when-let ((path (getenv sk/tree-sitter-grammar-path-env)))
+                (when-let* ((path (getenv sk/tree-sitter-grammar-path-env)))
                   (split-string path path-separator t))
                 (list sk/tree-sitter-grammar-path-fallback)))
     (when (file-directory-p dir)

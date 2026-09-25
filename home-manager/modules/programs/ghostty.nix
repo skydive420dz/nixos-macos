@@ -14,9 +14,9 @@
         font-family = JetBrainsMono Nerd Font
         font-size = 16
 
-        background-opacity = 1
+        background-opacity = .85
         background-opacity-cells = false
-        background-blur = false
+        background-blur = true
 
         cursor-style = block
         cursor-style-blink = false
@@ -45,11 +45,11 @@
         shell-integration-features = no-cursor,title,ssh-env
         confirm-close-surface = true
 
-       # custom-shader = ${config.xdg.configHome}/ghostty/shaders/cursor_blaze.glsl
-       # custom-shader = ${config.xdg.configHome}/ghostty/shaders/cursor_smear.glsl
-       # custom-shader = ${config.xdg.configHome}/ghostty/shaders/bloom025.glsl
-       # custom-shader-animation = true
-       # window-vsync = true
+        custom-shader = ${config.xdg.configHome}/ghostty/shaders/cursor_blaze.glsl
+        custom-shader = ${config.xdg.configHome}/ghostty/shaders/cursor_smear.glsl
+        custom-shader = ${config.xdg.configHome}/ghostty/shaders/bloom025.glsl
+        custom-shader-animation = true
+        window-vsync = true
 
         keybind = alt+enter=new_window
         keybind = performable:ctrl+h=goto_split:left

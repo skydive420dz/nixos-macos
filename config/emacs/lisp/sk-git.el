@@ -3,7 +3,7 @@
 (use-package with-editor
   :defer t
   :config
-  (when-let ((emacsclient (or (executable-find "emacsclient")
+  (when-let* ((emacsclient (or (executable-find "emacsclient")
                               (let ((candidate (expand-file-name "emacsclient"
                                                                  invocation-directory)))
                                 (and (file-executable-p candidate) candidate)))))

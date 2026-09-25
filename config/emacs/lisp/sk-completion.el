@@ -101,7 +101,7 @@
             :exclusive 'no
             :annotation-function
             (lambda (candidate)
-              (when-let ((name (cdr (assoc candidate matches))))
+              (when-let* ((name (cdr (assoc candidate matches))))
                 (concat " " name)))
             :company-kind (lambda (_) 'snippet)
             :exit-function
